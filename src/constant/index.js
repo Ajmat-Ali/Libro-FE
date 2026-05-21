@@ -4,4 +4,21 @@ const ROLES = {
   GUARD: "guard",
 };
 
-export { ROLES };
+const DAYS = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
+const SEAT_TYPES = [
+  { key: "general", label: "General" },
+  { key: "vip", label: "VIP" },
+  { key: "window", label: "Window" },
+  { key: "cabin", label: "Cabin" },
+];
+
+export { ROLES, DAYS, SEAT_TYPES };

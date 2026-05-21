@@ -23,7 +23,7 @@ import {
 } from "recharts";
 import { getOwnerDashboard } from "../../api/owner.api";
 
-// ── HELPER FUNCTIONS ─────────────────────────────────────────────
+// ----------------- HELPER FUNCTIONS --------------------------
 
 const formatCurrency = (amount) =>
   new Intl.NumberFormat("en-IN", {
@@ -44,8 +44,8 @@ const formatTime = (dateString) =>
     minute: "2-digit",
   });
 
-// ── STAT CARD ─────────────────────────────────────────────────────
-const StatCard = ({ icon: Icon, label, value, color }) => {
+//------------------- STAT CARD --------------------------
+const StatCard = ({ icon: Icon, label, value, color, subtitle }) => {
   const colorMap = {
     blue: "bg-blue-50   dark:bg-blue-500/10   text-blue-600   dark:text-blue-400",
     emerald:
@@ -60,17 +60,18 @@ const StatCard = ({ icon: Icon, label, value, color }) => {
   };
 
   return (
-    <div
-      className="bg-white dark:bg-slate-800 rounded-2xl p-5
-                    border border-slate-100 dark:border-slate-700
-                    hover:shadow-md transition-shadow duration-200"
-    >
+    <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow duration-200">
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
           <p className="text-2xl font-bold text-slate-900 dark:text-white">
             {value}
           </p>
+          {subtitle && (
+            <p className="text-xs text-slate-400 dark:text-slate-500">
+              {subtitle}
+            </p>
+          )}
         </div>
         <div
           className={`w-10 h-10 rounded-xl flex items-center justify-center ${colorMap[color]}`}
@@ -82,12 +83,9 @@ const StatCard = ({ icon: Icon, label, value, color }) => {
   );
 };
 
-// ── SKELETON CARD (loading placeholder) ──────────────────────────
+// ------------------  SKELETON CARD (loading placeholder) ----------------------
 const SkeletonCard = () => (
-  <div
-    className="bg-white dark:bg-slate-800 rounded-2xl p-5
-                  border border-slate-100 dark:border-slate-700 animate-pulse"
-  >
+  <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700 animate-pulse">
     <div className="flex items-start justify-between">
       <div className="space-y-2">
         <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-20" />
@@ -98,7 +96,7 @@ const SkeletonCard = () => (
   </div>
 );
 
-// ── CUSTOM CHART TOOLTIP ──────────────────────────────────────────
+// ------------------  CUSTOM CHART TOOLTIP -----------------------------
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -127,7 +125,7 @@ const OwnerDashboard = () => {
       try {
         const response = await getOwnerDashboard();
         setData(response);
-      } catch {
+      } catch (err) {
         setError("Failed to load dashboard. Please refresh the page.");
       } finally {
         setLoading(false);
@@ -137,6 +135,7 @@ const OwnerDashboard = () => {
   }, []);
 
   // Transform graph data for Recharts
+
   const chartData =
     data?.revenueGraph?.map((item) => ({
       date: formatDate(item._id),
@@ -152,12 +151,9 @@ const OwnerDashboard = () => {
 
   return (
     <div className="p-4 lg:p-6 space-y-6 font-['DM_Sans']">
-      {/* ── PAGE HEADER ──────────────────────────────────────── */}
+      {/* ---------------------- PAGE HEADER -----------------------------*/}
       <div>
-        <h1
-          className="text-xl font-bold text-slate-900 dark:text-white
-                       font-['Playfair_Display']"
-        >
+        <h1 className="text-xl font-bold text-slate-900 dark:text-white font-['Playfair_Display']">
           Dashboard
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
@@ -167,16 +163,12 @@ const OwnerDashboard = () => {
 
       {/* Error banner */}
       {error && (
-        <div
-          className="p-4 bg-red-50 dark:bg-red-500/10 border border-red-200
-                        dark:border-red-500/20 rounded-xl text-red-600
-                        dark:text-red-400 text-sm"
-        >
+        <div className="p-4 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl text-red-600 dark:text-red-400 text-sm">
           {error}
         </div>
       )}
 
-      {/* ── STATS GRID ───────────────────────────────────────── */}
+      {/* --------------------------- STATS GRID-------------------------------- */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
         {loading ? (
           Array(6)
@@ -219,18 +211,16 @@ const OwnerDashboard = () => {
               label="Occupancy Rate"
               value={stats.occupancyRate ?? "0%"}
               color="orange"
+              subtitle={`of ${stats.totalSeats ?? 0} total seats`}
             />
           </>
         )}
       </div>
 
-      {/* ── REVENUE CHART + QUICK ALERTS ─────────────────────── */}
+      {/* --------------------- REVENUE CHART + QUICK ALERTS ---------------------- */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         {/* Revenue chart — spans 2 columns */}
-        <div
-          className="xl:col-span-2 bg-white dark:bg-slate-800 rounded-2xl p-5
-                        border border-slate-100 dark:border-slate-700"
-        >
+        <div className="xl:col-span-2 bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="font-semibold text-slate-900 dark:text-white">
@@ -240,10 +230,7 @@ const OwnerDashboard = () => {
                 Last 30 days
               </p>
             </div>
-            <span
-              className="text-xs px-3 py-1 bg-amber-50 dark:bg-amber-500/10
-                             text-amber-600 dark:text-amber-400 rounded-full font-medium"
-            >
+            <span className="text-xs px-3 py-1 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full font-medium">
               {formatCurrency(revenue.thisMonth)} this month
             </span>
           </div>
@@ -301,15 +288,9 @@ const OwnerDashboard = () => {
         {/* Quick alerts column */}
         <div className="space-y-4">
           {/* Pending approvals */}
-          <div
-            className="bg-white dark:bg-slate-800 rounded-2xl p-5
-                          border border-slate-100 dark:border-slate-700"
-          >
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700">
             <div className="flex items-center gap-4">
-              <div
-                className="w-12 h-12 bg-amber-50 dark:bg-amber-500/10 rounded-xl
-                              flex items-center justify-center flex-shrink-0"
-              >
+              <div className="w-12 h-12 bg-amber-50 dark:bg-amber-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
                 <Clock className="w-6 h-6 text-amber-600 dark:text-amber-400" />
               </div>
               <div>
@@ -322,10 +303,7 @@ const OwnerDashboard = () => {
               </div>
             </div>
             {!loading && stats.pendingApprovals > 0 && (
-              <p
-                className="mt-3 text-xs text-amber-600 dark:text-amber-400
-                            flex items-center gap-1.5"
-              >
+              <p className="mt-3 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
                 <AlertTriangle className="w-3 h-3" />
                 Needs your attention
               </p>
@@ -333,14 +311,8 @@ const OwnerDashboard = () => {
           </div>
 
           {/* Expiring memberships */}
-          <div
-            className="bg-white dark:bg-slate-800 rounded-2xl p-5
-                          border border-slate-100 dark:border-slate-700"
-          >
-            <h3
-              className="text-sm font-semibold text-slate-900 dark:text-white
-                           mb-3 flex items-center gap-2"
-            >
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-5  border border-slate-100 dark:border-slate-700">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-orange-500" />
               Expiring Soon
             </h3>
@@ -352,8 +324,7 @@ const OwnerDashboard = () => {
                   .map((_, i) => (
                     <div
                       key={i}
-                      className="h-10 bg-slate-100 dark:bg-slate-700
-                                          rounded-lg animate-pulse"
+                      className="h-10 bg-slate-100 dark:bg-slate-700 rounded-lg animate-pulse"
                     />
                   ))}
               </div>
@@ -394,25 +365,15 @@ const OwnerDashboard = () => {
         </div>
       </div>
 
-      {/* ── DEFAULTERS + RECENT SCANS ────────────────────────── */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      {/* ----------------------- DEFAULTERS + RECENT SCANS ------------------------------- */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 ">
         {/* Defaulters */}
-        <div
-          className="bg-white dark:bg-slate-800 rounded-2xl p-5
-                        border border-slate-100 dark:border-slate-700"
-        >
-          <h3
-            className="font-semibold text-slate-900 dark:text-white mb-4
-                         flex items-center gap-2"
-          >
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700">
+          <h3 className="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2 ">
             <IndianRupee className="w-4 h-4 text-red-500" />
             Defaulters
             {!loading && alerts.defaulters?.length > 0 && (
-              <span
-                className="ml-auto text-xs bg-red-50 dark:bg-red-500/10
-                               text-red-600 dark:text-red-400
-                               px-2 py-0.5 rounded-full font-medium"
-              >
+              <span className="ml-auto text-xs bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full font-medium">
                 {alerts.defaulters.length} pending
               </span>
             )}
@@ -425,15 +386,14 @@ const OwnerDashboard = () => {
                 .map((_, i) => (
                   <div
                     key={i}
-                    className="h-12 bg-slate-100 dark:bg-slate-700
-                                        rounded-lg animate-pulse"
+                    className="h-12 bg-slate-100 dark:bg-slate-700 rounded-lg animate-pulse"
                   />
                 ))}
             </div>
           ) : alerts.defaulters?.length === 0 ? (
             <p className="text-sm text-slate-400">No pending dues 🎉</p>
           ) : (
-            <div className="divide-y divide-slate-100 dark:divide-slate-700">
+            <div className="divide-y divide-slate-100 dark:divide-slate-700 ">
               {alerts.defaulters?.map((item, i) => (
                 <div key={i} className="flex items-center justify-between py-3">
                   <div>
@@ -452,16 +412,16 @@ const OwnerDashboard = () => {
         </div>
 
         {/* Recent scans */}
-        <div
-          className="bg-white dark:bg-slate-800 rounded-2xl p-5
-                        border border-slate-100 dark:border-slate-700"
-        >
-          <h3
-            className="font-semibold text-slate-900 dark:text-white mb-4
-                         flex items-center gap-2"
-          >
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700">
+          <h3 className="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
             <Scan className="w-4 h-4 text-blue-500" />
             Recent Scans
+            {!loading && stats.todayFailedScans > 0 && (
+              <span className="ml-auto text-xs font-medium px-2 py-0.5 rounded-full bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 flex items-center gap-1">
+                <XCircle className="w-3 h-3" />
+                {stats.todayFailedScans} failed today
+              </span>
+            )}
           </h3>
 
           {loading ? (
@@ -471,8 +431,7 @@ const OwnerDashboard = () => {
                 .map((_, i) => (
                   <div
                     key={i}
-                    className="h-12 bg-slate-100 dark:bg-slate-700
-                                        rounded-lg animate-pulse"
+                    className="h-12 bg-slate-100 dark:bg-slate-700 rounded-lg animate-pulse"
                   />
                 ))}
             </div>
@@ -506,6 +465,10 @@ const OwnerDashboard = () => {
                     <p className="text-xs text-slate-400">
                       {formatTime(scan.scanTime)}
                     </p>
+                    <p className="text-xs text-slate-400 pb-1">
+                      {formatDate(scan.scanTime)}
+                    </p>
+
                     {scan.scanResult === "failed" && (
                       <p className="text-xs text-red-400 capitalize">
                         {scan.failReason?.replace(/_/g, " ")}
