@@ -5,6 +5,7 @@ import Step1LibraryInfo from "./setup/Step1LibraryInfo";
 import Step2Floors from "./setup/Step2Floors";
 import Step3Seats from "./setup/Step3Seats";
 import Step4Slots from "./setup/Step4Slots";
+import { Link } from "react-router-dom";
 
 const STEPS = [
   { number: 1, label: "Library" },
@@ -36,14 +37,16 @@ const OwnerSetup = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 font-['DM_Sans'] transition-colors duration-300 ">
       {/* ---------------------- TOP NAV ------------------------- */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
-            <BookOpen className="w-4 h-4 text-slate-900" />
+        <Link to={"/owner/dashboard"}>
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
+              <BookOpen className="w-4 h-4 text-slate-900" />
+            </div>
+            <span className="font-semibold text-slate-900 dark:text-white">
+              Libro
+            </span>
           </div>
-          <span className="font-semibold text-slate-900 dark:text-white">
-            Libro
-          </span>
-        </div>
+        </Link>
         <button
           onClick={() => setIsDark(!isDark)}
           className="w-9 h-9 flex items-center justify-center rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
