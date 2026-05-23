@@ -19,6 +19,7 @@ import AttendancePage from "../pages/owner/AttendancePage";
 import AnnouncementsPage from "../pages/owner/AnnouncementsPage";
 import ReportsPage from "../pages/owner/ReportsPage";
 import SettingsPage from "../pages/owner/SettingsPage";
+import MemberDetailPage from "../pages/owner/members/MemberDetailPage";
 
 const AppRouter = () => {
   return (
@@ -37,6 +38,10 @@ const AppRouter = () => {
           <Route element={<OwnerLayout />}>
             <Route path="/owner/dashboard" element={<OwnerDashboard />} />
             <Route path="/owner/members" element={<MembersPage />} />
+            <Route
+              path="/owner/members/:memberId"
+              element={<MemberDetailPage />}
+            />
             <Route path="/owner/bookings" element={<BookingsPage />} />
             <Route path="/owner/payments" element={<PaymentsPage />} />
             <Route path="/owner/floors" element={<FloorsPage />} />

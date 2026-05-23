@@ -5,6 +5,8 @@ import SkeletonRow from "./components/MemberSkeletonRow";
 import Avatar from "./components/MemberAvatar";
 import { ActiveStatusBadge, StatusBadge } from "./components/MemberStatusBadge";
 import RejectModal from "./components/MemberRejectModel";
+import AddWalkInDrawer from "./members/AddWalkInDrawer";
+import { useNavigate } from "react-router-dom";
 
 // ── FILTER TABS ───────────────────────────────────────────────────
 const FILTER_TABS = [
@@ -27,6 +29,8 @@ const MembersPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [showAddDrawer, setShowAddDrawer] = useState(false);
+  const navigate = useNavigate();
 
   // ------------------------------ FETCH ----------------------------------
   const fetchMembers = useCallback(async () => {
@@ -118,9 +122,21 @@ const MembersPage = () => {
             </p>
           </div>
           {/* Part 2 — Add Member button */}
-          <button className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-900 text-sm font-semibold rounded-xl transition-all flex-shrink-0">
+          <button
+            onClick={() => setShowAddDrawer(true)}
+            className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-900 text-sm font-semibold rounded-xl transition-all flex-shrink-0"
+          >
             + Add Member
           </button>
+          {showAddDrawer && (
+            <AddWalkInDrawer
+              onClose={() => setShowAddDrawer(false)}
+              onSuccess={() => {
+                setShowAddDrawer(false);
+                fetchMembers();
+              }}
+            />
+          )}
         </div>
 
         {/* Error banner */}
@@ -218,10 +234,16 @@ const MembersPage = () => {
                     return (
                       <tr
                         key={member._id}
+                        // onClick={() => navigate(`/owner/members/${member._id}`)}
                         className="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors"
                       >
                         {/* Member info */}
-                        <td className="px-4 py-3.5">
+                        <td
+                          onClick={() =>
+                            navigate(`/owner/members/${member._id}`)
+                          }
+                          className="px-4 py-3.5"
+                        >
                           <div className="flex items-center gap-3">
                             <Avatar
                               firstName={user?.firstName}
@@ -245,14 +267,24 @@ const MembersPage = () => {
                         </td>
 
                         {/* Phone */}
-                        <td className="px-4 py-3.5">
+                        <td
+                          onClick={() =>
+                            navigate(`/owner/members/${member._id}`)
+                          }
+                          className="px-4 py-3.5"
+                        >
                           <span className="text-sm text-slate-600 dark:text-slate-300 font-mono">
                             {member.phone || "—"}
                           </span>
                         </td>
 
                         {/* Status */}
-                        <td className="px-4 py-3.5">
+                        <td
+                          onClick={() =>
+                            navigate(`/owner/members/${member._id}`)
+                          }
+                          className="px-4 py-3.5"
+                        >
                           <StatusBadge
                             approvalStatus={member.approvalStatus}
                             isActive={user?.isActive ?? true}
@@ -260,14 +292,24 @@ const MembersPage = () => {
                         </td>
 
                         {/* Active Status */}
-                        <td className="px-4 py-3.5">
+                        <td
+                          onClick={() =>
+                            navigate(`/owner/members/${member._id}`)
+                          }
+                          className="px-4 py-3.5"
+                        >
                           <ActiveStatusBadge
                             isActive={user?.isActive ?? true}
                           />
                         </td>
 
                         {/* Joined date */}
-                        <td className="px-4 py-3.5  sm:table-cell">
+                        <td
+                          onClick={() =>
+                            navigate(`/owner/members/${member._id}`)
+                          }
+                          className="px-4 py-3.5  sm:table-cell"
+                        >
                           <span className="text-sm text-slate-500 dark:text-slate-400">
                             {new Date(member.createdAt).toLocaleDateString(
                               "en-IN",

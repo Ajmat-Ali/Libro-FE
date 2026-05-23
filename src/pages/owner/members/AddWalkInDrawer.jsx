@@ -11,10 +11,7 @@ const MemberPreview = ({ firstName, lastName, email, phone }) => {
 
   return (
     <div className="flex items-center gap-4 p-4 bg-slate-900 rounded-xl mb-6">
-      <div
-        className="w-12 h-12 rounded-full bg-amber-500 flex items-center
-                      justify-center flex-shrink-0 text-slate-900 font-bold text-lg"
-      >
+      <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 text-slate-900 font-bold text-lg">
         {hasName ? initials : <User className="w-5 h-5" />}
       </div>
       <div className="min-w-0">
@@ -31,10 +28,7 @@ const MemberPreview = ({ firstName, lastName, email, phone }) => {
         </p>
       </div>
       <div className="ml-auto flex-shrink-0">
-        <span
-          className="text-xs bg-emerald-500/20 text-emerald-400 px-2
-                         py-0.5 rounded-full font-medium"
-        >
+        <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-medium">
           Auto Approved
         </span>
       </div>
@@ -106,23 +100,12 @@ const AddWalkInDrawer = ({ onClose, onSuccess }) => {
       />
 
       {/* Drawer */}
-      <div
-        className="fixed right-0 top-0 h-full w-full sm:w-[440px]
-                      bg-slate-50 dark:bg-slate-900 z-50 flex flex-col
-                      shadow-2xl border-l border-slate-200 dark:border-slate-700
-                      animate-[slideInRight_0.3s_ease-out]"
-      >
+      <div className="fixed right-0 top-0 h-full w-full sm:w-[440px] bg-slate-50 dark:bg-slate-900 z-50 flex flex-col shadow-2xl border-l border-slate-200 dark:border-slate-700 animate-[slideInRight_0.3s_ease-out]">
+        {" "}
         {/* Header */}
-        <div
-          className="flex items-center justify-between px-6 py-5
-                        border-b border-slate-200 dark:border-slate-700
-                        bg-white dark:bg-slate-800"
-        >
+        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
           <div>
-            <h2
-              className="font-bold text-slate-900 dark:text-white
-                           font-['Playfair_Display']"
-            >
+            <h2 className="font-bold text-slate-900 dark:text-white font-['Playfair_Display']">
               Add Walk-in Member
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -131,14 +114,11 @@ const AddWalkInDrawer = ({ onClose, onSuccess }) => {
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg
-                       text-slate-400 hover:text-slate-600 dark:hover:text-slate-200
-                       hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
-
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
           {/* Live preview */}
@@ -150,11 +130,7 @@ const AddWalkInDrawer = ({ onClose, onSuccess }) => {
           />
 
           {serverError && (
-            <div
-              className="p-3 bg-red-50 dark:bg-red-500/10 border
-                            border-red-200 dark:border-red-500/20 rounded-xl
-                            text-red-600 dark:text-red-400 text-sm"
-            >
+            <div className="p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl text-red-600 dark:text-red-400 text-sm">
               {serverError}
             </div>
           )}
@@ -167,10 +143,7 @@ const AddWalkInDrawer = ({ onClose, onSuccess }) => {
             {/* Name row */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label
-                  className="text-xs font-medium text-slate-600
-                                  dark:text-slate-400 mb-1.5 block"
-                >
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5 block">
                   First Name *
                 </label>
                 <input
@@ -188,10 +161,7 @@ const AddWalkInDrawer = ({ onClose, onSuccess }) => {
                 )}
               </div>
               <div>
-                <label
-                  className="text-xs font-medium text-slate-600
-                                  dark:text-slate-400 mb-1.5 block"
-                >
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5 block">
                   Last Name
                 </label>
                 <input
@@ -204,10 +174,7 @@ const AddWalkInDrawer = ({ onClose, onSuccess }) => {
 
             {/* Email */}
             <div>
-              <label
-                className="text-xs font-medium text-slate-600
-                                dark:text-slate-400 mb-1.5 block"
-              >
+              <label className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5 block">
                 Email *
               </label>
               <input
@@ -231,10 +198,7 @@ const AddWalkInDrawer = ({ onClose, onSuccess }) => {
 
             {/* Phone */}
             <div>
-              <label
-                className="text-xs font-medium text-slate-600
-                                dark:text-slate-400 mb-1.5 block"
-              >
+              <label className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5 block">
                 Phone *
               </label>
               <input
@@ -258,10 +222,7 @@ const AddWalkInDrawer = ({ onClose, onSuccess }) => {
 
             {/* Address */}
             <div>
-              <label
-                className="text-xs font-medium text-slate-600
-                                dark:text-slate-400 mb-1.5 block"
-              >
+              <label className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5 block">
                 Address
                 <span className="text-slate-400 font-normal ml-1">
                   (optional)
@@ -275,10 +236,7 @@ const AddWalkInDrawer = ({ onClose, onSuccess }) => {
               />
             </div>
 
-            <div
-              className="p-3 bg-amber-50 dark:bg-amber-500/10 rounded-xl
-                            border border-amber-200 dark:border-amber-500/20"
-            >
+            <div className="p-3 bg-amber-50 dark:bg-amber-500/10 rounded-xl border border-amber-200 dark:border-amber-500/20">
               <p className="text-xs text-amber-700 dark:text-amber-400">
                 🔑 A random password will be auto-generated and emailed to the
                 member. They can change it after first login.
@@ -286,18 +244,11 @@ const AddWalkInDrawer = ({ onClose, onSuccess }) => {
             </div>
           </form>
         </div>
-
         {/* Sticky footer */}
-        <div
-          className="px-6 py-4 border-t border-slate-200 dark:border-slate-700
-                        bg-white dark:bg-slate-800 flex gap-3"
-        >
+        <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 border border-slate-200 dark:border-slate-700
-                       text-slate-700 dark:text-slate-300 hover:bg-slate-50
-                       dark:hover:bg-slate-700 font-medium rounded-xl
-                       transition-all text-sm"
+            className="flex-1 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium rounded-xl transition-all text-sm"
           >
             Cancel
           </button>
@@ -305,10 +256,7 @@ const AddWalkInDrawer = ({ onClose, onSuccess }) => {
             type="submit"
             form="walkInForm"
             disabled={isSubmitting}
-            className="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600
-                       disabled:bg-amber-500/60 disabled:cursor-not-allowed
-                       text-slate-900 font-semibold rounded-xl transition-all
-                       text-sm flex items-center justify-center gap-2"
+            className="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 disabled:bg-amber-500/60 disabled:cursor-not-allowed text-slate-900 font-semibold rounded-xl transition-all text-sm flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <>
