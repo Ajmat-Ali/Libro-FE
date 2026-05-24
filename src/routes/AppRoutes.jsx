@@ -20,6 +20,7 @@ import AnnouncementsPage from "../pages/owner/AnnouncementsPage";
 import ReportsPage from "../pages/owner/ReportsPage";
 import SettingsPage from "../pages/owner/SettingsPage";
 import MemberDetailPage from "../pages/owner/members/MemberDetailPage";
+import BookingDetailPage from "../pages/owner/bookings/BookingDetailPage";
 
 const AppRouter = () => {
   return (
@@ -43,6 +44,10 @@ const AppRouter = () => {
               element={<MemberDetailPage />}
             />
             <Route path="/owner/bookings" element={<BookingsPage />} />
+            <Route
+              path="/owner/bookings/:bookingId"
+              element={<BookingDetailPage />}
+            />
             <Route path="/owner/payments" element={<PaymentsPage />} />
             <Route path="/owner/floors" element={<FloorsPage />} />
             <Route path="/owner/slots" element={<SlotsPage />} />

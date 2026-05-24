@@ -72,6 +72,33 @@ const updateMember = async (memberId, data) => {
   return response.data;
 };
 
+// --------------------------------------------------- Bookings -----------------------
+
+// API functions to ADD to src/api/owner.api.js:
+
+const getFloors = () => axiosInstance.get("/owner/floors");
+
+const getSeats = (floorId) =>
+  axiosInstance.get(`/owner/floors/${floorId}/seats`);
+
+const getSlots = () => axiosInstance.get("/owner/slots");
+
+const getPlans = (params) => axiosInstance.get("/owner/plans", { params });
+
+const getBookings = (params) =>
+  axiosInstance.get("/owner/bookings", { params });
+
+const createBooking = (data) => axiosInstance.post("/owner/bookings", data);
+
+const cancelBooking = (id, data) =>
+  axiosInstance.patch(`/owner/bookings/${id}/cancel`, data);
+
+const extendBooking = (id, data) =>
+  axiosInstance.patch(`/owner/bookings/${id}/extend`, data);
+
+const getOneBooking = (id) => axiosInstance.get(`/owner/bookings/${id}`);
+//--------------------------------------------------------------
+
 export {
   getOwnerLibrary,
   getOwnerDashboard,
@@ -85,4 +112,13 @@ export {
   toggleMemberStatus,
   addWalkInMember,
   updateMember,
+  getFloors,
+  getSeats,
+  getSlots,
+  getPlans,
+  getBookings,
+  createBooking,
+  cancelBooking,
+  extendBooking,
+  getOneBooking,
 };
