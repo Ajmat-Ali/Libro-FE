@@ -97,7 +97,15 @@ const extendBooking = (id, data) =>
   axiosInstance.patch(`/owner/bookings/${id}/extend`, data);
 
 const getOneBooking = (id) => axiosInstance.get(`/owner/bookings/${id}`);
-//--------------------------------------------------------------
+
+//------------------------------- QR --------------------------------------
+const getStudentQRList = (memberId) =>
+  axiosInstance.get(`/owner/members/${memberId}/qr`);
+
+const getStudentQRImage = (memberId, qrId) =>
+  axiosInstance.get(`/owner/members/${memberId}/qr/${qrId}`, {
+    responseType: "blob",
+  });
 
 export {
   getOwnerLibrary,
@@ -121,4 +129,6 @@ export {
   cancelBooking,
   extendBooking,
   getOneBooking,
+  getStudentQRList,
+  getStudentQRImage,
 };

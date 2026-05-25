@@ -1,6 +1,3 @@
-// BookingDetailCard.jsx
-// Place at: src/pages/owner/bookings/BookingDetailCard.jsx
-
 import {
   Calendar,
   Clock,
@@ -247,18 +244,18 @@ export default function BookingDetailCard({
 }) {
   if (!booking) return null;
 
-  const student = booking.studentId ?? {};
-  const seat = booking.seatId ?? {};
-  const slot = booking.timeSlotId ?? {};
-  const plan = booking.planId ?? {};
-  const days = booking.status === "active" ? daysLeft(booking.endDate) : null;
+  const student = booking?.studentId ?? {};
+  const seat = booking?.seatId ?? {};
+  const slot = booking?.timeSlotId ?? {};
+  const plan = booking?.planId ?? {};
+  const days = booking?.status === "active" ? daysLeft(booking.endDate) : null;
   const pmtCfg = payment
     ? (PAYMENT_CONFIG[payment.status] ?? PAYMENT_CONFIG.pending)
     : null;
   const PmtIcon = pmtCfg?.icon ?? AlertCircle;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 ">
       {/* ── TOP CARD — Student + Status ── */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
         {/* Amber top stripe */}
@@ -270,6 +267,7 @@ export default function BookingDetailCard({
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center text-xl font-black text-amber-700 dark:text-amber-400 shrink-0">
                 {(student.firstName?.[0] ?? "?").toUpperCase()}
+                {(student.lastName?.[0] ?? "?").toUpperCase()}
               </div>
               <div>
                 <p className="text-lg font-bold text-slate-900 dark:text-white font-['Playfair_Display']">
@@ -383,7 +381,7 @@ export default function BookingDetailCard({
       {(booking.status === "active" ||
         booking.status === "expired" ||
         booking.status === "cancelled") && (
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3 ">
           {booking.status === "active" && (
             <>
               <button

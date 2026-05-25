@@ -1,12 +1,9 @@
-// StudentBookingHistory.jsx
-// Place at: src/pages/owner/bookings/StudentBookingHistory.jsx
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BookOpen, ChevronRight, Clock, Calendar } from "lucide-react";
 import { getBookings } from "../../../api/owner.api";
 
-// ── STATUS CONFIG ────────────────────────────────────────────────
+// --------------------------------------- STATUS CONFIG ---------------------------------------
 const STATUS_CONFIG = {
   active: {
     bg: "bg-emerald-50 dark:bg-emerald-900/20",
@@ -180,7 +177,7 @@ export default function StudentBookingHistory({ studentId, currentBookingId }) {
                 </div>
 
                 {/* Status + arrow */}
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 shrink-0 ">
                   <StatusBadge status={b.status} />
                   <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-amber-400 transition-colors" />
                 </div>

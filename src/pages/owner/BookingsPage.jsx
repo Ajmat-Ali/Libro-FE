@@ -10,6 +10,7 @@ import {
   AlertCircle,
   Calendar,
   Clock,
+  X,
 } from "lucide-react";
 import {
   getBookings,
@@ -107,33 +108,6 @@ export default function BookingsPage() {
   }, [fetchBookings]);
 
   //////////////////////////////////////////
-
-  // const handleStudentSearch = (e) => {
-  //   const { value } = e.target;
-  //   setStudentSearch(value);
-
-  //   if (debounceRef.current) clearTimeout(debounceRef.current);
-  //   if (!value.trim()) {
-  //     setSearchBooking([]);
-  //     return;
-  //   }
-  //   debounceRef.current = setTimeout(async () => {
-  //     try {
-  //       setSearchBooking([]);
-  //       const res = await getBookings({
-  //         search: value.trim(),
-  //         limit: 8,
-  //       });
-
-  //       setSearchBooking(res?.data?.booking ?? []);
-  //     } catch (err) {
-  //       setSearchBooking([]);
-  //       setServerError(err.message);
-  //     } finally {
-  //       // setStudentLoading(false);
-  //     }
-  //   }, 400);
-  // };
 
   // ------------------ Debouncing for search studentId ------------
   const handleStudentSearch = (val) => {
@@ -282,7 +256,7 @@ export default function BookingsPage() {
         <div className="relative opacity-40- pointer-events-none-">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
 
-          {selectedStudent ? (
+          {/* {selectedStudent ? (
             <div className="flex items-center gap-3 p-3.5 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/30">
               <div className="w-9 h-9 rounded-full bg-amber-200 dark:bg-amber-800 flex items-center justify-center text-sm font-bold text-amber-800 dark:text-amber-200 shrink-0 overflow-hidden">
                 {(selectedStudent.userId?.firstName?.[0] ?? "?").toUpperCase()}
@@ -307,60 +281,61 @@ export default function BookingsPage() {
                 <X className="w-4 h-4" />
               </button>
             </div>
-          ) : (
-            <div ref={dropdownRef} className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-              <input
-                type="text"
-                placeholder="Type name or email to search…"
-                value={studentSearch}
-                onChange={(e) => handleStudentSearch(e.target.value)}
-                onFocus={() => studentSearch && setShowStudentDropdown(true)}
-                className="w-full pl-9 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
-                autoComplete="off"
-              />
+          ) : ( */}
+          <div ref={dropdownRef} className="relative  ">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Type name or email to search…"
+              value={studentSearch}
+              onChange={(e) => handleStudentSearch(e.target.value)}
+              onFocus={() => studentSearch && setShowStudentDropdown(true)}
+              className="w-full pl-9 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+              autoComplete="off"
+            />
 
-              {showStudentDropdown && studentSearch && (
-                <div className="absolute z-10 mt-1.5 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden">
-                  {studentLoading ? (
-                    <div className="px-4 py-3.5 text-sm text-slate-400 flex items-center gap-2">
-                      <div className="w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
-                      Searching…
-                    </div>
-                  ) : studentResults.length === 0 ? (
-                    <div className="px-4 py-3.5 text-sm text-slate-400">
-                      No booking found for this member
-                    </div>
-                  ) : (
-                    studentResults.map((m) => (
-                      <button
-                        key={m._id}
-                        onClick={() => {
-                          setSelectedStudent(m);
-                          setShowStudentDropdown(false);
-                          setStudentSearch("");
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors text-left"
-                      >
-                        <div className="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center text-xs font-bold text-amber-700 dark:text-amber-300 shrink-0">
-                          {(m.studentId?.firstName?.[0] ?? "?").toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
-                            {m.studentId?.firstName} {m.studentId?.lastName}
-                          </p>
-                          <p className="text-xs text-slate-400 truncate">
-                            {m.studentId?.email}
-                          </p>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 shrink-0" />
-                      </button>
-                    ))
-                  )}
-                </div>
-              )}
-            </div>
-          )}
+            {showStudentDropdown && studentSearch && (
+              <div className="absolute z-10 mt-1.5 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden">
+                {studentLoading ? (
+                  <div className="px-4 py-3.5 text-sm text-slate-400 flex items-center gap-2">
+                    <div className="w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
+                    Searching…
+                  </div>
+                ) : studentResults.length === 0 ? (
+                  <div className="px-4 py-3.5 text-sm text-slate-400">
+                    No booking found for this member
+                  </div>
+                ) : (
+                  studentResults.map((b) => (
+                    <button
+                      key={b._id}
+                      onClick={() => {
+                        setSelectedStudent(b);
+                        setShowStudentDropdown(false);
+                        setStudentSearch("");
+                        navigate(`/owner/bookings/${b._id}`);
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors text-left"
+                    >
+                      <div className="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center text-xs font-bold text-amber-700 dark:text-amber-300 shrink-0">
+                        {(b.studentId?.firstName?.[0] ?? "?").toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                          {b.studentId?.firstName} {b.studentId?.lastName}
+                        </p>
+                        <p className="text-xs text-slate-400 truncate">
+                          {b.studentId?.email}
+                        </p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 shrink-0" />
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+          {/* )} */}
         </div>
 
         {/* Slot filter */}

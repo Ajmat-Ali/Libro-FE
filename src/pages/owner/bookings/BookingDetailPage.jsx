@@ -1,18 +1,3 @@
-// BookingDetailPage.jsx
-// Place at: src/pages/owner/BookingDetailPage.jsx
-//
-// Add to AppRouter.jsx:
-//   <Route path="/owner/bookings/:bookingId" element={<ProtectedRoute role="owner"><OwnerLayout><BookingDetailPage /></OwnerLayout></ProtectedRoute>} />
-//
-// Add to owner.api.js:
-//   export const getOneBooking = (id) => axiosInstance.get(`/owner/bookings/${id}`);
-//
-// In BookingsPage.jsx — make each row clickable (add a View button or wrap with navigate):
-//   import { useNavigate } from "react-router-dom";
-//   const navigate = useNavigate();
-//   // Inside row actions:
-//   <button onClick={() => navigate(`/owner/bookings/${b._id}`)} ...>View</button>
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, AlertCircle } from "lucide-react";
@@ -24,7 +9,10 @@ import ExtendModal from "./ExtendModal";
 import CreateBookingDrawer from "./CreateBookingDrawer";
 import { cancelBooking, extendBooking } from "../../../api/owner.api";
 
-// ── SKELETON ─────────────────────────────────────────────────────
+import { fetchQRAsBase64 } from "../../../utils/qrUtils";
+import MemberIdCard from "./MemberIdCard";
+
+// --------------------------------------- SKELETON ---------------------------------------
 function DetailSkeleton() {
   return (
     <div className="space-y-4 animate-pulse">
@@ -64,7 +52,7 @@ function DetailSkeleton() {
   );
 }
 
-// ── MAIN PAGE ────────────────────────────────────────────────────
+// --------------------------------------- MAIN PAGE ---------------------------------------
 export default function BookingDetailPage() {
   const { bookingId } = useParams();
   const navigate = useNavigate();
@@ -80,6 +68,11 @@ export default function BookingDetailPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [toast, setToast] = useState(null);
 
+  const [qrDataUrl, setQrDataUrl] = useState(null);
+  const [membershipId, setMembershipId] = useState(null);
+  const [studentPhoto, setStudentPhoto] = useState(null);
+  const [memberId, setMemberId] = useState(null);
+
   // Auto-dismiss toast
   useEffect(() => {
     if (!toast) return;
@@ -93,8 +86,9 @@ export default function BookingDetailPage() {
     setError("");
     getOneBooking(bookingId)
       .then((res) => {
-        setBooking(res.data.booking);
-        setPayment(res.data.payment ?? null);
+        setBooking(res?.data?.booking || {});
+        // console.log(res.data);
+        setPayment(res?.data?.payment ?? null);
       })
       .catch(() =>
         setError("Booking not found or you don't have access to it."),
@@ -106,7 +100,7 @@ export default function BookingDetailPage() {
     fetchBooking();
   }, [bookingId]);
 
-  // ── Action handlers ──
+  // --------------------------------------- Action handlers ---------------------------------------
   const handleCancel = async (reason) => {
     setActionLoading(true);
     try {
@@ -151,7 +145,7 @@ export default function BookingDetailPage() {
   // Derived
   const studentId = booking?.studentId?._id ?? booking?.studentId;
 
-  // ── RENDER ───────────────────────────────────────────────────────
+  // --------------------------------------- RENDER ---------------------------------------
   return (
     <div className="p-5 sm:p-6 max-w-5xl mx-auto">
       {/* Toast */}
@@ -166,6 +160,9 @@ export default function BookingDetailPage() {
           {toast.type === "success" ? "✓" : "✕"} {toast.msg}
         </div>
       )}
+
+      {/* <MemberIDCard booking={booking} /> */}
+      <MemberIdCard booking={booking} />
 
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-5">
