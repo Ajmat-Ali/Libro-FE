@@ -24,6 +24,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { logoutUser } from "../api/auth.api";
 import { clearCredentials } from "../store/slices/authSlice";
+import { setLibrary } from "../store/slices/library";
 
 const navLinks = [
   { to: "/owner/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -51,7 +52,7 @@ const OwnerLayout = () => {
     const checkLibrary = async () => {
       try {
         const response = await getOwnerLibrary();
-        // dispatch()
+        dispatch(setLibrary(response.library));
       } catch (error) {
         if (error.response?.status === 404) {
           navigate("/owner/setup", { replace: true });

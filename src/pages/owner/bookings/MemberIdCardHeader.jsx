@@ -1,6 +1,6 @@
 import React from "react";
 
-const MemberIdCardHeader = ({ libraryName }) => {
+const MemberIdCardHeader = ({ libraryName, name }) => {
   return (
     <div
       style={{

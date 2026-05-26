@@ -3,12 +3,14 @@ import axiosInstance from "../api/axiosInstance";
 export const fetchQRAsBase64 = async (memberId, bookingId) => {
   try {
     const listRes = await axiosInstance.get(`/owner/members/${memberId}/qr`);
+
     const qrs = listRes.data.qrCodes ?? [];
-    const qr = qrs.find((q) => (q.bookingId?._id ?? q.bookingId) === bookingId);
+
+    const qr = qrs.find((q) => q?.booking?.bookingId === bookingId);
     if (!qr) return null;
 
     const imgRes = await axiosInstance.get(
-      `/owner/members/${memberId}/qr/${qr._id}`,
+      `/owner/members/${memberId}/qr/${qr.qrId}`,
       { responseType: "blob" },
     );
     return new Promise((resolve) => {

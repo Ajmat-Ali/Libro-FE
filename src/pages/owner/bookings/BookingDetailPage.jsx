@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, AlertCircle } from "lucide-react";
-import { getOneBooking } from "../../../api/owner.api";
+import { getMembers, getOneBooking } from "../../../api/owner.api";
 import BookingDetailCard from "./BookingDetailCard";
 import StudentBookingHistory from "./StudentBookingHistory";
 import CancelModal from "./CancelModal";
@@ -11,46 +11,8 @@ import { cancelBooking, extendBooking } from "../../../api/owner.api";
 
 import { fetchQRAsBase64 } from "../../../utils/qrUtils";
 import MemberIdCard from "./MemberIdCard";
-
-// --------------------------------------- SKELETON ---------------------------------------
-function DetailSkeleton() {
-  return (
-    <div className="space-y-4 animate-pulse">
-      {/* Top card */}
-      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 space-y-4">
-        <div className="h-1.5 rounded bg-slate-200 dark:bg-slate-700 w-full" />
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700" />
-          <div className="space-y-2">
-            <div className="h-4 w-36 bg-slate-200 dark:bg-slate-700 rounded" />
-            <div className="h-3 w-24 bg-slate-100 dark:bg-slate-700 rounded" />
-          </div>
-        </div>
-        <div className="h-10 bg-slate-100 dark:bg-slate-700/50 rounded-xl" />
-      </div>
-      {/* Grid */}
-      <div className="grid grid-cols-2 gap-4">
-        {[0, 1].map((i) => (
-          <div
-            key={i}
-            className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5 space-y-4"
-          >
-            <div className="h-3 w-20 bg-slate-100 dark:bg-slate-700 rounded" />
-            {[0, 1, 2].map((j) => (
-              <div key={j} className="flex gap-3">
-                <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700" />
-                <div className="space-y-1.5 flex-1">
-                  <div className="h-2.5 w-16 bg-slate-100 dark:bg-slate-700 rounded" />
-                  <div className="h-3.5 w-28 bg-slate-200 dark:bg-slate-700 rounded" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+import DetailSkeleton from "./DetailSkeleton";
+import { useSelector } from "react-redux";
 
 // --------------------------------------- MAIN PAGE ---------------------------------------
 export default function BookingDetailPage() {
@@ -68,10 +30,13 @@ export default function BookingDetailPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [toast, setToast] = useState(null);
 
-  const [qrDataUrl, setQrDataUrl] = useState(null);
+  const [memberId, setMemberId] = useState(null);
   const [membershipId, setMembershipId] = useState(null);
   const [studentPhoto, setStudentPhoto] = useState(null);
-  const [memberId, setMemberId] = useState(null);
+  const [qrDataUrl, setQrDataUrl] = useState(null);
+  const [cardLoading, setCardLoading] = useState(false);
+
+  const library = useSelector((store) => store.library);
 
   // Auto-dismiss toast
   useEffect(() => {
@@ -87,13 +52,35 @@ export default function BookingDetailPage() {
     getOneBooking(bookingId)
       .then((res) => {
         setBooking(res?.data?.booking || {});
-        // console.log(res.data);
         setPayment(res?.data?.payment ?? null);
+        fetchCardData(res.data.booking.studentId._id, res.data.booking._id);
       })
       .catch(() =>
         setError("Booking not found or you don't have access to it."),
       )
       .finally(() => setLoading(false));
+  };
+
+  const fetchCardData = async (userId, bookingId) => {
+    setCardLoading(true);
+    try {
+      const profileRes = await getMembers({ userId, limit: 1 });
+
+      const profile = profileRes?.members[0];
+      if (!profile) return;
+
+      setMemberId(profile._id);
+      setStudentPhoto(profile.photo ?? null);
+      setMembershipId(profile.membershipId ?? null);
+
+      const qr = await fetchQRAsBase64(profile?.userId?._id, bookingId);
+
+      setQrDataUrl(qr);
+    } catch (err) {
+      console.error("Card data fetch failed:", err);
+    } finally {
+      setCardLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -161,9 +148,6 @@ export default function BookingDetailPage() {
         </div>
       )}
 
-      {/* <MemberIDCard booking={booking} /> */}
-      <MemberIdCard booking={booking} />
-
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-5">
         <Link
@@ -178,6 +162,18 @@ export default function BookingDetailPage() {
           {loading ? "Loading…" : `Booking Detail`}
         </span>
       </div>
+
+      {cardLoading ? (
+        <div className="w-[400px] h-[248px] rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+      ) : (
+        <MemberIdCard
+          booking={booking}
+          membershipId={membershipId}
+          studentPhoto={studentPhoto}
+          qrDataUrl={qrDataUrl}
+          libraryName={library.name}
+        />
+      )}
 
       {/* Page title */}
       <div className="mb-6">

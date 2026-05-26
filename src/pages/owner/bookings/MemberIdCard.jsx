@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Download, Printer, Loader2 } from "lucide-react";
 // import QRPlaceholder from "./QRPlaceholder";
 import Tag from "./Tag";
@@ -33,11 +33,16 @@ export default function MemberIDCard({
   membershipId,
   studentPhoto,
   qrDataUrl,
-  libraryName = "Libro Library",
+  libraryName = "Libro Library ",
 }) {
   const cardRef = useRef(null);
   const [dlLoading, setDlLoading] = useState(false);
   const [prtLoading, setPrtLoading] = useState(false);
+
+  const wrapRef = useRef(null);
+  const [scale, setScale] = useState(1);
+  const CARD_W = 400;
+  const CARD_H = 248;
 
   const [prt, setPrt] = useState(false);
   const [dl, setDl] = useState(false);
@@ -55,124 +60,16 @@ export default function MemberIDCard({
 
   const statusCfg = STATUS_MAP[booking?.status] ?? STATUS_MAP.expired;
 
-  // ── html2canvas capture (dynamic import — only loads when needed) ──
-
-  const captureCard = async () => {
-    if (!cardRef.current) throw new Error("Card ref missing");
-    const html2canvas = (await import("html2canvas")).default;
-
-    return html2canvas(cardRef.current, {
-      scale: 3, // 3× = print-quality (1200×744 px output)
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: "#ffffff",
-      logging: false,
-    });
-  };
-
-  const captureCards = async () => {
-    const html2canvas = (await import("html2canvas")).default;
-    const el = cardRef.current;
-
-    // Temporarily disable clipping during capture
-    const prevOverflow = el.style.overflow;
-    const prevRadius = el.style.borderRadius;
-    el.style.overflow = "visible";
-    el.style.borderRadius = "0";
-
-    const canvas = await html2canvas(el, {
-      scale: 3,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: "#ffffff",
-      logging: false,
-      scrollX: -window.scrollX,
-      scrollY: -window.scrollY,
-    });
-
-    // Restore
-    el.style.overflow = prevOverflow;
-    el.style.borderRadius = prevRadius;
-
-    return canvas;
-  };
-
-  // ------------------- Download PNG ----------------------------------
-
-  // const handleDownload = async () => {
-  //   if (dlLoading) return;
-  //   setDlLoading(true);
-  //   try {
-  //     const canvas = await captureCard();
-  //     const link = document.createElement("a");
-  //     link.download = `${fullName.replace(/\s+/g, "-").toLowerCase()}-library-card.png`;
-  //     link.href = canvas.toDataURL("image/png", 1.0);
-  //     link.click();
-  //   } catch (err) {
-  //     console.error("Download failed:", err);
-  //   } finally {
-  //     setDlLoading(false);
-  //   }
-  // };
-
-  // ── Print ────────────────────────────────────────────────────────
-  // const handlePrints = async () => {
-  //   if (prtLoading) return;
-  //   setPrtLoading(true);
-  //   try {
-  //     const canvas = await captureCard();
-  //     const dataUrl = canvas.toDataURL("image/png", 1.0);
-
-  //     const win = window.open("", "_blank", "width=640,height=480");
-  //     win.document.write(`<!DOCTYPE html>
-  // <html>
-  // <head>
-  //   <title>Library ID Card — ${fullName}</title>
-  //   <style>
-  //     * { margin: 0; padding: 0; box-sizing: border-box; }
-  //     body {
-  //       min-height: 100vh;
-  //       display: flex;
-  //       flex-direction: column;
-  //       align-items: center;
-  //       justify-content: center;
-  //       background: #f8fafc;
-  //       padding: 24px;
-  //       gap: 20px;
-  //       font-family: system-ui, sans-serif;
-  //     }
-  //     img {
-  //       max-width: 400px;
-  //       width: 100%;
-  //       border-radius: 14px;
-  //       box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  //     }
-  //     p {
-  //       font-size: 12px;
-  //       color: #94a3b8;
-  //     }
-  //     @media print {
-  //       body { background: white; padding: 0; justify-content: flex-start; padding-top: 20px; }
-  //       img  { max-width: 340px; box-shadow: none; }
-  //       p    { display: none; }
-  //     }
-  //   </style>
-  // </head>
-  // <body>
-  //   <img src="${dataUrl}" alt="Library ID Card" />
-  //   <p>${libraryName} · ${fullName} · ${membershipId ?? ""}</p>
-  //   <script>
-  //     window.onload = () => setTimeout(() => { window.print(); }, 400);
-  //   </script>
-  // </body>
-  // </html>`);
-  //     win.document.close();
-  //   } catch (err) {
-  //     console.error("Print failed:", err);
-  //   } finally {
-  //     setPrtLoading(false);
-  //   }
-  // };
+  useEffect(() => {
+    const calc = () => {
+      if (!wrapRef.current) return;
+      const available = wrapRef.current.offsetWidth;
+      setScale(available < CARD_W ? available / CARD_W : 1);
+    };
+    calc();
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
+  }, []);
 
   const handleDownload = async () => {
     if (dlLoading) return;
@@ -180,11 +77,19 @@ export default function MemberIDCard({
     setDl(true);
     try {
       const { toPng } = await import("html-to-image");
+
       const dataUrl = await toPng(cardRef.current, {
         cacheBust: true,
         pixelRatio: 3,
         backgroundColor: "#ffffff",
+        width: CARD_W,
+        height: CARD_H,
+        style: {
+          transform: "scale(1)", // overrides scale during capture only
+          transformOrigin: "top left", // keeps positioning correct
+        },
       });
+
       const a = document.createElement("a");
       a.download = `${fullName.replace(/\s+/g, "-").toLowerCase()}-id-card.png`;
       a.href = dataUrl;
@@ -203,11 +108,19 @@ export default function MemberIDCard({
     setPrt(true);
     try {
       const { toPng } = await import("html-to-image");
+
       const dataUrl = await toPng(cardRef.current, {
         cacheBust: true,
         pixelRatio: 3,
         backgroundColor: "#ffffff",
+        width: CARD_W,
+        height: CARD_H,
+        style: {
+          transform: "scale(1)", // overrides scale during capture only
+          transformOrigin: "top left", // keeps positioning correct
+        },
       });
+
       const win = window.open("", "_blank", "width=640,height=500");
       win.document.write(`<!DOCTYPE html><html><head><title>ID Card</title>
     <style>
@@ -227,7 +140,7 @@ export default function MemberIDCard({
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center my-10">
       <p
         style={{
           fontSize: "19px",
@@ -241,43 +154,56 @@ export default function MemberIDCard({
         Membership ID Card
       </p>
 
-      {/* ── The Card ────────────────────────── ref here ─ */}
       <div
-        ref={cardRef}
+        ref={wrapRef}
         style={{
-          width: "400px",
-          height: "248px",
-          borderRadius: "16px",
+          width: "100%",
+          maxWidth: CARD_W,
+          height: CARD_H * scale,
           overflow: "hidden",
-          fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif",
-          background: "#ffffff",
-          position: "relative",
-          flexShrink: 0,
-          boxShadow: "0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)",
         }}
       >
-        <MemberIdCardHeader libraryName={libraryName} />
-
-        {/* ════ CARD BODY ══════════════════════════════ */}
-        <MemberIdCardBody
-          statusCfg={statusCfg}
-          membershipId={membershipId}
-          booking={booking}
-          qrDataUrl={qrDataUrl}
-        />
-
-        {/* ════ BOTTOM ACCENT STRIP ════════════════════ */}
         <div
+          id="meberIdCard"
+          ref={cardRef}
           style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: "3.5px",
-            background:
-              "linear-gradient(90deg, #f59e0b 0%, #ea580c 50%, #f59e0b 100%)",
+            width: CARD_W,
+            height: CARD_H,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            borderRadius: "16px",
+            overflow: "hidden",
+            fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif",
+            background: "#ffffff",
+            position: "relative",
+            flexShrink: 0,
+            boxShadow:
+              "0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)",
           }}
-        />
+        >
+          <MemberIdCardHeader libraryName={libraryName} />
+
+          {/* ════ CARD BODY ══════════════════════════════ */}
+          <MemberIdCardBody
+            statusCfg={statusCfg}
+            membershipId={membershipId}
+            booking={booking}
+            qrDataUrl={qrDataUrl}
+          />
+
+          {/* ════ BOTTOM ACCENT STRIP ════════════════════ */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: "3.5px",
+              background:
+                "linear-gradient(90deg, #f59e0b 0%, #ea580c 50%, #f59e0b 100%)",
+            }}
+          />
+        </div>
       </div>
 
       {/* ── Action Buttons (outside card = NOT captured) ─────── */}
@@ -299,7 +225,7 @@ export default function MemberIDCard({
             </>
           ) : (
             <>
-              <Download className="w-4 h-4" /> Download PNG
+              <Download className="w-4 h-4 max-xsm:w-2" /> Download
             </>
           )}
         </button>

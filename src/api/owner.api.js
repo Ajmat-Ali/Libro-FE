@@ -107,6 +107,17 @@ const getStudentQRImage = (memberId, qrId) =>
     responseType: "blob",
   });
 
+// ------------------------------- Library --------------------------------
+const updateLibrary = (data) => axiosInstance.patch("/owner/library", data);
+const uploadLogo = (form) => axiosInstance.patch("/owner/library/logo", form);
+const addHoliday = (data) =>
+  axiosInstance.post("/owner/library/holidays", data);
+const removeHoliday = (id) =>
+  axiosInstance.delete(`/owner/library/holidays/${id}`);
+const getGuards = () => axiosInstance.get("/owner/guards");
+const createGuard = (data) => axiosInstance.post("/owner/guards", data);
+const deactivateGuard = (id) => axiosInstance.delete(`/owner/guards/${id}`);
+
 export {
   getOwnerLibrary,
   getOwnerDashboard,
@@ -131,4 +142,11 @@ export {
   getOneBooking,
   getStudentQRList,
   getStudentQRImage,
+  updateLibrary,
+  uploadLogo,
+  addHoliday,
+  removeHoliday,
+  getGuards,
+  createGuard,
+  deactivateGuard,
 };
