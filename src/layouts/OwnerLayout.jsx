@@ -69,7 +69,6 @@ const OwnerLayout = () => {
     try {
       await logoutUser();
     } catch (error) {
-      // console.log(error.response);
     } finally {
       dispatch(clearCredentials());
       navigate("/login", { replace: true });

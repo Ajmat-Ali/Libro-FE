@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import LoginPage from "../pages/auth/LoginPage";
 import OwnerDashboard from "../pages/owner/OwnerDashboard";
 import StudentDashboard from "../pages/student/StudentDashboard";
-import GuardScan from "../pages/guard/GuardScan";
+import GuardScanPage from "../pages/guard/GuardScanPage";
 import ProtectedRoute from "./ProtectedRoute";
 import NavigateToDashboard from "./NavigateToDashboard";
 
@@ -66,7 +66,7 @@ const AppRouter = () => {
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["guard"]} />}>
-          <Route path="/guard/scan" element={<GuardScan />} />
+          <Route path="/guard/scan" element={<GuardScanPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -9,8 +9,8 @@ import {
 import LibraryInfoSection from "./settings/LibraryInfoSection";
 import TimingsSection from "./settings/TimingsSection";
 import HourlyRatesSection from "./settings/HourlyRatesSection";
-// import HolidaysSection from "./settings/HolidaysSection";
-// import GuardsSection from "./settings/GuardsSection";
+import HolidaysSection from "./settings/HolidaysSection";
+import GuardsSection from "./settings/guard/GuardSection";
 
 const TABS = [
   { key: "library", label: "Library Info", icon: Building2 },
@@ -27,8 +27,8 @@ export default function SettingsPage() {
     library: <LibraryInfoSection />,
     timings: <TimingsSection />,
     rates: <HourlyRatesSection />,
-    // holidays: <HolidaysSection />,
-    // guards: <GuardsSection />,
+    holidays: <HolidaysSection />,
+    guards: <GuardsSection />,
   };
 
   return (
