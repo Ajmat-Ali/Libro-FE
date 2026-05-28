@@ -22,17 +22,37 @@ import SettingsPage from "../pages/owner/SettingsPage";
 import MemberDetailPage from "../pages/owner/members/MemberDetailPage";
 import BookingDetailPage from "../pages/owner/bookings/BookingDetailPage";
 
+// ---------------------------------- Auth Pages ---------------------
+import RegisterPage from "../pages/auth/RegisterPage";
+// import VerifyEmailPage from "../pages/auth/VerifyEmailPage";
+// import ForgetPasswordPage from "../pages/auth/ForgotPasswordPage";
+// import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
+import AuthLayout from "../pages/auth/AuthLayout";
+
 const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
+        {/* --------------------- Auth ----------------- */}
         <Route element={<NavigateToDashboard />}>
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Route>
-
         <Route element={<NavigateToDashboard />}>
           <Route path="/login" element={<LoginPage />} />
         </Route>
+
+        <Route element={<NavigateToDashboard />}>
+          <Route
+            path="/register"
+            element={
+              <AuthLayout>
+                <RegisterPage />
+              </AuthLayout>
+            }
+          />
+        </Route>
+
+        {/* --------------------- Owner ------------------------- */}
 
         <Route element={<ProtectedRoute allowedRoles={["owner"]} />}>
           <Route path="/owner/setup" element={<OwnerSetup />} />
@@ -60,11 +80,9 @@ const AppRouter = () => {
             <Route path="/owner/settings" element={<SettingsPage />} />
           </Route>
         </Route>
-
         <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
           <Route path="/student/dashboard" element={<StudentDashboard />} />
         </Route>
-
         <Route element={<ProtectedRoute allowedRoles={["guard"]} />}>
           <Route path="/guard/scan" element={<GuardScanPage />} />
         </Route>

@@ -255,7 +255,7 @@ export default function BookingDetailCard({
   const PmtIcon = pmtCfg?.icon ?? AlertCircle;
 
   return (
-    <div className="space-y-4 ">
+    <div className="space-y-4">
       {/* ── TOP CARD — Student + Status ── */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
         {/* Amber top stripe */}

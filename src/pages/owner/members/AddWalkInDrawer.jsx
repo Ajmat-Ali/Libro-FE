@@ -96,11 +96,11 @@ const AddWalkInDrawer = ({ onClose, onSuccess }) => {
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 "
       />
 
       {/* Drawer */}
-      <div className="fixed right-0 top-0 h-full w-full sm:w-[440px] bg-slate-50 dark:bg-slate-900 z-50 flex flex-col shadow-2xl border-l border-slate-200 dark:border-slate-700 animate-[slideInRight_0.3s_ease-out]">
+      <div className=" fixed right-0 top-0 h-full w-full sm:w-[440px] bg-slate-50 dark:bg-slate-900 z-50 flex flex-col shadow-2xl border-l border-slate-200 dark:border-slate-700 animate-[slideInRight_0.3s_ease-out]">
         {" "}
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
