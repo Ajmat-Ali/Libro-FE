@@ -215,14 +215,6 @@ export default function BookingsPage() {
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white font-['Playfair_Display']">
             Bookings
           </h1>
-          {/* <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            Seat reservations across all members
-            {!loading && (
-              <span className="ml-1 text-amber-600 dark:text-amber-400 font-medium">
-                · {pagination.total} total
-              </span>
-            )}
-          </p> */}
         </div>
         <button
           onClick={() => setShowCreateDrawer(true)}

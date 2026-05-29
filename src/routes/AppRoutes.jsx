@@ -28,6 +28,7 @@ import RegisterPage from "../pages/auth/RegisterPage";
 // import ForgetPasswordPage from "../pages/auth/ForgotPasswordPage";
 // import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
 import AuthLayout from "../pages/auth/AuthLayout";
+import VerifyOTPPage from "../pages/auth/VerifyOtpPage";
 
 const AppRouter = () => {
   return (
@@ -47,6 +48,17 @@ const AppRouter = () => {
             element={
               <AuthLayout>
                 <RegisterPage />
+              </AuthLayout>
+            }
+          />
+        </Route>
+
+        <Route element={<NavigateToDashboard />}>
+          <Route
+            path="/verify-otp"
+            element={
+              <AuthLayout>
+                <VerifyOTPPage />
               </AuthLayout>
             }
           />
