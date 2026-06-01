@@ -1,76 +1,71 @@
-// ─────────────────────────────────────────────────────────────────
-// DESIGN ONLY — no API calls, no form submission logic
-// next I'll handle:
-//   - calling POST /api/auth/verify-email  { email, otp }
-//   - calling POST /api/auth/resend-otp    { email }
-//   - showing "verified" state after success
-//   - showing error message on wrong OTP
-// -----------------------------------
-
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Mail, RefreshCw, ArrowLeft, CheckCircle2, Clock } from "lucide-react";
 import { verifyEmail } from "../../api/auth.api";
 import OTPInput from "./OtpInputBoxPage";
 import PendingApprovalScreen from "./OtpVerifyPendingApprovalScreen";
-
-// ----------------------------------- RESEND BUTTON (design only — wire up onClick yourself) -----------------------------------
-function ResendButton({ canResend, secondsLeft, onResend, loading }) {
-  if (!canResend) {
-    return (
-      <p className="text-sm text-slate-400 dark:text-slate-500 text-center">
-        Resend code in{" "}
-        <span className="tabular-nums font-semibold text-slate-600 dark:text-slate-300">
-          {secondsLeft}s
-        </span>
-      </p>
-    );
-  }
-  return (
-    <button
-      onClick={onResend}
-      disabled={loading}
-      className="mx-auto flex items-center gap-1.5 text-sm font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors disabled:opacity-60"
-    >
-      <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-      {loading ? "Sending…" : "Resend OTP"}
-    </button>
-  );
-}
+import ResendButton from "./ResendButton";
 
 // ----------------------------------- MAIN PAGE -----------------------------------
 export default function VerifyOTPPage() {
   const [otp, setOtp] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [err, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [verified, setVerified] = useState(false);
+  const [secs, setSecs] = useState(5);
+  const [canResend, setCanResend] = useState(false);
 
-  // TASK FOR YOU:
-  //   const location     = useLocation()
-  //   const email        = location.state?.email ?? ""
-  //   const navigate     = useNavigate()
-  //   const [loading, setLoading]     = useState(false)
-  //   const [error,   setError]       = useState("")
-  //   const [verified,setVerified]    = useState(false)
-  //   const [canResend, setCanResend] = useState(false)
-  //   const [secs, setSecs]           = useState(60)
-  //   -> show <PendingApprovalScreen /> when verified === true
+  useEffect(() => {
+    const id = setInterval(() => {
+      setSecs((pre) => {
+        if (pre <= 0) {
+          clearInterval(id);
+          setCanResend(true);
+          return 0;
+        }
+        return pre - 1;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // console.log("Seconds: ", secs);
 
   const location = useLocation();
-  // console.log(location.state.email);
-
-  const email = "demo@email.com"; // replace with location.state?.email
-  const loading = false;
-  const error = ""; // replace with your error state
-  const canResend = false;
-  const secs = 45;
+  const email = location?.state?.email;
 
   const handleVerify = async () => {
     try {
-      const res = await OTPInput(value);
+      setLoading(true);
+      const res = await verifyEmail({
+        email,
+        otp,
+      });
+      setVerified(true);
+      setLoading(false);
+      setError("");
+      console.log(res);
     } catch (error) {
+      setLoading(false);
+      console.log(normalizeServerError(error));
+      setError(normalizeServerError(error));
       // Error -
     }
   };
+
+  const normalizeServerError = (error) => {
+    const response = error?.response?.data;
+    if (response?.errors) {
+      return Object.values(response?.errors)[0];
+    }
+    if (response?.message) {
+      return response?.message;
+    }
+
+    return "Something went wrong";
+  };
+
+  if (verified) return <PendingApprovalScreen />;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex">
@@ -119,6 +114,7 @@ export default function VerifyOTPPage() {
           )}
 
           <button
+            onClick={handleVerify}
             disabled={otp.length < 6 || loading}
             className="w-full py-3.5 bg-amber-500 hover:bg-amber-600 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl transition-all shadow-sm shadow-amber-200 dark:shadow-none flex items-center justify-center gap-2"
           >
@@ -139,8 +135,8 @@ export default function VerifyOTPPage() {
             secondsLeft={secs}
             onResend={() => {}} // wire up your resend handler
             loading={false}
+            email
           />
-          <PendingApprovalScreen />
 
           <div className="flex justify-center">
             <Link

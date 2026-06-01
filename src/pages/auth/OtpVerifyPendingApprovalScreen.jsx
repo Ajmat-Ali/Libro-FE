@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 
 export function PendingApprovalScreen() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-5">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 p-8 text-center space-y-6">
+    <div className=" min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-5 max-sm:p-2">
+      <div className="w-full bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 p-8 text-center space-y-6">
         {/* Icon stack */}
         <div className="relative flex justify-center">
           <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
