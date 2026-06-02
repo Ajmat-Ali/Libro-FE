@@ -35,9 +35,14 @@ const LoginPage = () => {
       else if (response.userData.role === "guard") navigate("/guard/scan");
       else navigate("/student/dashboard");
     } catch (error) {
-      setServerError(
-        error.response?.data?.message || "Something went wrong. Try again.",
-      );
+      let err = "";
+      if (error?.response?.data?.errors) {
+        err = Object.values(error?.response?.data?.errors)[0];
+      } else {
+        err = error?.response?.data?.message;
+      }
+
+      setServerError(err || "Something went wrong. Try again.");
     }
   };
 
@@ -215,6 +220,17 @@ const LoginPage = () => {
                   </p>
                 )}
               </div>
+
+              {serverError === "Invalid credential" && (
+                <div className="flex justify-center">
+                  <Link
+                    to="/forgot-password"
+                    className="text-sm text-amber-600 dark:text-amber-400 hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+              )}
 
               <button
                 type="submit"

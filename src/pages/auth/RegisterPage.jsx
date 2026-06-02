@@ -39,9 +39,9 @@ const RegisterPage = () => {
     try {
       const res = await registerStudent(data);
 
-      // console.log(res);
-      // console.log(res.data, res.status);
       if (res.status === 201) {
+        localStorage.setItem("email", JSON.stringify(data.email));
+
         navigate("/verify-otp", { state: { email: data.email } });
       }
 

@@ -12,7 +12,9 @@ const loginUser = async (credentials) => {
 const registerStudent = (data) =>
   axiosInstance.post("/auth/register-student", data);
 const verifyEmail = (data) => axiosInstance.post("/auth/verify-email", data);
-const resendOTP = (data) => axiosInstance.post("/auth/resend-otp", data);
+const resendOTP = (data) => {
+  return axiosInstance.post("/auth/resend-otp", data);
+};
 const forgotPassword = (data) =>
   axiosInstance.post("/auth/forgot-password", data);
 const resetPassword = (data) =>

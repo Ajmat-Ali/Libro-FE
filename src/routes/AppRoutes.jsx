@@ -24,11 +24,11 @@ import BookingDetailPage from "../pages/owner/bookings/BookingDetailPage";
 
 // ---------------------------------- Auth Pages ---------------------
 import RegisterPage from "../pages/auth/RegisterPage";
-// import VerifyEmailPage from "../pages/auth/VerifyEmailPage";
-// import ForgetPasswordPage from "../pages/auth/ForgotPasswordPage";
-// import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
+
 import AuthLayout from "../pages/auth/AuthLayout";
 import VerifyOTPPage from "../pages/auth/VerifyOtpPage";
+import ForgotPasswordPage from "../pages/auth/ForgotPassword";
+import ResetPasswordPage from "../pages/auth/ResetPassword";
 
 const AppRouter = () => {
   return (
@@ -51,6 +51,9 @@ const AppRouter = () => {
               </AuthLayout>
             }
           />
+        </Route>
+        <Route element={<NavigateToDashboard />}>
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         </Route>
 
         <Route element={<NavigateToDashboard />}>

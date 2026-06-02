@@ -5,15 +5,22 @@ import { verifyEmail } from "../../api/auth.api";
 import OTPInput from "./OtpInputBoxPage";
 import PendingApprovalScreen from "./OtpVerifyPendingApprovalScreen";
 import ResendButton from "./ResendButton";
+import { resendOTP } from "../../api/auth.api";
 
 // ----------------------------------- MAIN PAGE -----------------------------------
 export default function VerifyOTPPage() {
+  const location = useLocation();
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [verified, setVerified] = useState(false);
-  const [secs, setSecs] = useState(5);
+  const [secs, setSecs] = useState(60);
   const [canResend, setCanResend] = useState(false);
+  const [email, setEmail] = useState(
+    () => JSON.parse(localStorage.getItem("email")) || location?.state?.email,
+  );
+  const [resendStyle, setdResendStyle] = useState(true);
+  const [resendLoading, setResendLoading] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -27,12 +34,7 @@ export default function VerifyOTPPage() {
       });
     }, 1000);
     return () => clearInterval(id);
-  }, []);
-
-  // console.log("Seconds: ", secs);
-
-  const location = useLocation();
-  const email = location?.state?.email;
+  }, [canResend]);
 
   const handleVerify = async () => {
     try {
@@ -44,7 +46,7 @@ export default function VerifyOTPPage() {
       setVerified(true);
       setLoading(false);
       setError("");
-      console.log(res);
+      localStorage.removeItem("email");
     } catch (error) {
       setLoading(false);
       console.log(normalizeServerError(error));
@@ -65,6 +67,24 @@ export default function VerifyOTPPage() {
     return "Something went wrong";
   };
 
+  const handleResendOtp = async () => {
+    try {
+      setResendLoading(true);
+
+      const res = await resendOTP({ email });
+
+      setCanResend(false);
+      setSecs(60);
+      setdResendStyle(true);
+      setResendLoading(false);
+      setError("");
+    } catch (error) {
+      console.log(error);
+      setResendLoading(false);
+      setError(normalizeServerError(error));
+    }
+  };
+
   if (verified) return <PendingApprovalScreen />;
 
   return (
@@ -81,12 +101,16 @@ export default function VerifyOTPPage() {
             <h1 className="text-2xl font-black text-slate-900 dark:text-white font-['Playfair_Display']">
               Verify your email
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1.5 leading-relaxed">
-              We sent a 6-digit code to{" "}
-              <span className="font-semibold text-slate-700 dark:text-slate-200 break-all">
-                {email}
-              </span>
-            </p>
+            {email && (
+              <p
+                className={` dark:text-slate-400 text-sm mt-1.5 leading-relaxed ${resendStyle ? "text-green-500" : "text-slate-500"}`}
+              >
+                We sent a 6-digit code to{" "}
+                <span className="font-semibold text-slate-700 dark:text-slate-200 break-all">
+                  {email ? email : "No email found please resend Otp"}
+                </span>
+              </p>
+            )}
           </div>
 
           <OTPInput value={otp} onChange={setOtp} disabled={loading} />
@@ -133,9 +157,8 @@ export default function VerifyOTPPage() {
           <ResendButton
             canResend={canResend}
             secondsLeft={secs}
-            onResend={() => {}} // wire up your resend handler
-            loading={false}
-            email
+            onResend={handleResendOtp}
+            resendLoading={resendLoading}
           />
 
           <div className="flex justify-center">
