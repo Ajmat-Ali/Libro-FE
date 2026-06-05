@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, ArrowLeft } from "lucide-react";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { forgotPassword } from "../../api/auth.api";
 import { useForm } from "react-hook-form";
 import ResetPasswordPage from "./ResetPassword";
@@ -8,9 +8,9 @@ import ResetPasswordPage from "./ResetPassword";
 export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("ajmat@gmail.com");
 
-  const [canReset, setCanReset] = useState(true);
+  const [canReset, setCanReset] = useState(1);
 
   const {
     register,
@@ -24,6 +24,8 @@ export default function ForgotPasswordPage() {
       const res = await forgotPassword({ email: data.email });
       setLoading(false);
       setError(false);
+      setCanReset(true);
+      setEmail(data?.email);
     } catch (error) {
       setLoading(false);
       let err = "";
@@ -36,8 +38,8 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  if (canReset) {
-    return <ResetPasswordPage />;
+  if (canReset && email) {
+    return <ResetPasswordPage email={email} />;
   }
 
   return (
@@ -93,9 +95,39 @@ export default function ForgotPasswordPage() {
 
         <button
           type="submit"
+          disabled={isSubmitting}
           className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-xl transition-all"
         >
-          Send Verification Code
+          {isSubmitting ? (
+            <div className="flex justify-center items-center gap-x-2">
+              <svg
+                className="h-4 w-4 animate-spin"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-90"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                />
+              </svg>
+
+              <span>Sending...</span>
+            </div>
+          ) : (
+            <>
+              <span>Send Verification Code</span>
+            </>
+          )}
         </button>
       </form>
 

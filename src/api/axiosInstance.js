@@ -64,9 +64,11 @@ axiosInstance.interceptors.response.use(
         );
 
         const { accessToken, user } = response.data;
+
         appStore.dispatch(setCredentials({ user, accessToken }));
         processQueue(null, accessToken);
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
