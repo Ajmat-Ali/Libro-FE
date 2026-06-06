@@ -8,9 +8,9 @@ import ResetPasswordPage from "./ResetPassword";
 export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [email, setEmail] = useState("ajmat@gmail.com");
+  const [email, setEmail] = useState("");
 
-  const [canReset, setCanReset] = useState(1);
+  const [canReset, setCanReset] = useState(false);
 
   const {
     register,

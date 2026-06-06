@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { resetPassword } from "../../api/auth.api";
 import ResetPasswordSuccess from "./ResetPasswordSuccess";
 import ResendButton from "./ResendButton";
+import { resendOTP } from "../../api/auth.api";
 
 export default function ResetPasswordPage({ email }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,7 +17,7 @@ export default function ResetPasswordPage({ email }) {
   const [secs, setSecs] = useState(5);
 
   const [canResend, setCanResend] = useState(false);
-  const [secLeft, setSecLeft] = useState(10);
+  const [secsLeft, setSecsLeft] = useState(2);
   const [resendLoading, setResetLoading] = useState(false);
   const [resendError, setResendError] = useState("");
 
@@ -76,7 +77,7 @@ export default function ResetPasswordPage({ email }) {
 
   useEffect(() => {
     let id = setInterval(() => {
-      setSecLeft((prev) => {
+      setSecsLeft((prev) => {
         if (prev <= 0) {
           clearInterval(id);
           setCanResend(true);
@@ -88,7 +89,29 @@ export default function ResetPasswordPage({ email }) {
     return () => clearInterval(id);
   }, []);
 
-  console.log(secLeft);
+  const onResend = async () => {
+    try {
+      setResetLoading(true);
+      const res = await resendOTP({ email });
+
+      if (res.status === 200) {
+        setResetLoading(false);
+        setResendError("");
+      }
+      console.log("Resend success: ", res);
+    } catch (error) {
+      setResetLoading(false);
+      let err;
+      if (error?.response?.data?.errors) {
+        err = Object.values(error?.response?.data?.errors)[0];
+      } else if (error?.response?.data?.message) {
+        err = error?.response?.data?.message;
+      } else {
+        err = "Something went wrong";
+      }
+      setResendError(err);
+    }
+  };
 
   return (
     <div className="w-full max-w-md space-y-8 m-auto h-screen max-sm:p-5">
@@ -104,16 +127,17 @@ export default function ResetPasswordPage({ email }) {
         </p>
       </div>
 
-      {serverError && (
-        <div className="flex items-center gap-2.5 p-3.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-xl">
-          <div className="w-4 h-4 rounded-full bg-red-500 flex items-center justify-center shrink-0">
-            <span className="text-white text-[10px] font-black">!</span>
+      {serverError ||
+        (resendError && (
+          <div className="flex items-center gap-2.5 p-3.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-xl">
+            <div className="w-4 h-4 rounded-full bg-red-500 flex items-center justify-center shrink-0">
+              <span className="text-white text-[10px] font-black">!</span>
+            </div>
+            <p className="text-sm text-red-600 dark:text-red-400">
+              {serverError || resendError}
+            </p>
           </div>
-          <p className="text-sm text-red-600 dark:text-red-400">
-            {serverError}
-          </p>
-        </div>
-      )}
+        ))}
 
       <form onSubmit={handleSubmit(handleReset)} className="space-y-5">
         <div className="space-y-1.5">
@@ -279,7 +303,12 @@ export default function ResetPasswordPage({ email }) {
         </div> */}
       </form>
 
-      <ResendButton />
+      <ResendButton
+        canResend={canResend}
+        secondsLeft={secsLeft}
+        onResend={onResend}
+        resendLoading={resendLoading}
+      />
 
       <div className="text-center pb-7 ">
         <Link
