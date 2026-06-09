@@ -6,7 +6,7 @@ import { Navigate, Outlet } from "react-router-dom";
 const NavigateToDashboard = () => {
   const { isAuthenticated, user } = useSelector((store) => store.auth);
 
-  if (isAuthenticated) {
+  if (isAuthenticated && user) {
     if (user.role === ROLES.OWNER) {
       return <Navigate to={"/owner/dashboard"} replace />;
     } else if (user.role === ROLES.STUDENT) {

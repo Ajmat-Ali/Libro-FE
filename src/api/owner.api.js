@@ -15,6 +15,7 @@ const createLibrary = async (data) => {
   return response.data;
 };
 
+// ---------------------------------- Floor and Seats ---------------------------
 const createFloor = async (data) => {
   const response = await axiosInstance.post("/owner/floors", data);
   return response.data;
@@ -31,6 +32,19 @@ const createSeat = async (floorId, data) => {
 const createSlot = async (data) => {
   const response = await axiosInstance.post("/owner/slots", data);
   return response.data;
+};
+
+const getSeatsGrid = async (floorId, slotId, data) => {
+  const response = await axiosInstance.get(
+    `/owner/floors/${floorId}/seat-grid`,
+    {
+      params: {
+        slot: slotId,
+        date: data,
+      },
+    },
+  );
+  return response;
 };
 
 // -------------------------------- Member ---------------------------------------
@@ -149,4 +163,5 @@ export {
   getGuards,
   createGuard,
   deactivateGuard,
+  getSeatsGrid,
 };
