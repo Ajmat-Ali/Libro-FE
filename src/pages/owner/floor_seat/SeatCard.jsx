@@ -37,10 +37,8 @@ const STATUS_CONFIG = {
   },
 };
 
-const SeatCard = ({ seatData, onSeatClick }) => {
-  const { seat, gridStatus, dayLeft } = seatData;
-
-  //   console.log(seat, gridStatus, dayLeft);
+const SeatCard = ({ item, onClick }) => {
+  const { seat, gridStatus, dayLeft } = item;
 
   const config = STATUS_CONFIG[gridStatus] || STATUS_CONFIG.available;
 
@@ -48,7 +46,7 @@ const SeatCard = ({ seatData, onSeatClick }) => {
 
   return (
     <button
-      onClick={() => isClickable && onSeatClick(seatData)}
+      onClick={() => isClickable && onClick(item)}
       disabled={!isClickable}
       title={`${seat.seatLabel} — ${config.label}`}
       className={`

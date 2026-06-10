@@ -29,18 +29,24 @@ const createSeat = async (floorId, data) => {
   return response.data;
 };
 
+const createBulkSeats = async (floorId, seats) => {
+  return axiosInstance.post(`owner/floors/${floorId}/seats/bulk`, seats);
+};
+const updateSeatStatus = async (data) => {};
+const deleteSeat = async (data) => {};
+
 const createSlot = async (data) => {
   const response = await axiosInstance.post("/owner/slots", data);
   return response.data;
 };
 
-const getSeatsGrid = async (floorId, slotId, data) => {
+const getSeatGrid = async (floorId, data) => {
   const response = await axiosInstance.get(
     `/owner/floors/${floorId}/seat-grid`,
     {
       params: {
-        slot: slotId,
-        date: data,
+        slot: data.slot,
+        date: data.date,
       },
     },
   );
@@ -163,5 +169,8 @@ export {
   getGuards,
   createGuard,
   deactivateGuard,
-  getSeatsGrid,
+  getSeatGrid,
+  createBulkSeats,
+  updateSeatStatus,
+  deleteSeat,
 };
