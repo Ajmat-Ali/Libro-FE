@@ -23,12 +23,20 @@ const STATUS_CONFIG = {
     dot: "bg-yellow-400",
     label: "Maintenance",
   },
+  // reserved: {
+  //   light: "bg-yellow-50 border-yellow-400 text-yellow-700 hover:bg-yellow-100",
+  //   dark: "dark:bg-yellow-900/20 dark:border-yellow-500 dark:text-yellow-400 dark:hover:bg-yellow-900/40",
+  //   dot: "bg-yellow-400",
+  //   label: "Reserved",
+  // },
   reserved: {
-    light: "bg-yellow-50 border-yellow-400 text-yellow-700 hover:bg-yellow-100",
-    dark: "dark:bg-yellow-900/20 dark:border-yellow-500 dark:text-yellow-400 dark:hover:bg-yellow-900/40",
-    dot: "bg-yellow-400",
+    light:
+      "bg-purple-500/15 border-purple-400 text-purple-600 hover:bg-purple-500/25",
+    dark: "dark:bg-purple-500/15 dark:border-purple-500 dark:text-purple-400 dark:hover:bg-purple-500/25",
+    dot: "bg-purple-500",
     label: "Reserved",
   },
+
   disabled: {
     light: "bg-slate-100 border-slate-300 text-slate-400 cursor-not-allowed",
     dark: "dark:bg-slate-800 dark:border-slate-600 dark:text-slate-500 cursor-not-allowed",
@@ -42,7 +50,7 @@ const SeatCard = ({ item, onClick }) => {
 
   const config = STATUS_CONFIG[gridStatus] || STATUS_CONFIG.available;
 
-  const isClickable = gridStatus !== "disabled";
+  const isClickable = gridStatus !== "null";
 
   return (
     <button
@@ -51,7 +59,7 @@ const SeatCard = ({ item, onClick }) => {
       title={`${seat.seatLabel} — ${config.label}`}
       className={`
         relative flex flex-col items-center justify-center
-        h-16 w-16 rounded-lg border-2 transition-all duration-200
+        h-16 min- w-16 rounded-lg border-2 transition-all duration-200
         select-none focus:outline-none focus:ring-2 focus:ring-amber-400
         ${config.light} ${config.dark}
         ${isClickable ? "cursor-pointer active:scale-95" : ""}

@@ -126,7 +126,6 @@ const AddSeatModal = ({ floorId, onClose, onSuccess }) => {
       }
 
       const res = await createBulkSeats(floorId, { seats });
-      console.log(res);
 
       const created = res.data?.created || res.created || seats.length;
       const failed = res.data?.failed || res.failed || 0;

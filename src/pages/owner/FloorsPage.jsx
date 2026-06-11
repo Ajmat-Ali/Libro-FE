@@ -258,7 +258,6 @@ const FloorsPage = () => {
           </div>
         </div>
       </div>
-
       <div className="px-4 lg:px-6 -mt-10 pb-10 space-y-4">
         <div className=" bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700">
           <div className="flex flex-wrap gap-3">
@@ -333,7 +332,6 @@ const FloorsPage = () => {
           </div>
         )}
 
-        {/* ── Seat Grid ─────────────────────────────────────── */}
         <SeatGrid
           seats={seats}
           loading={gridLoading}
@@ -342,12 +340,14 @@ const FloorsPage = () => {
           onSeatClick={handleSeatClick}
         />
       </div>
-
+      {/* {console.log(floors)} */}
       {isDrawerOpen && selectedSeat && (
         <SeatDrawer
           seat={selectedSeat}
           floorId={selectedFloor}
           slotId={selectedSlot}
+          floor={floors.filter((floor) => floor._id === selectedFloor)}
+          slot={slots.filter((slot) => slot._id === selectedSlot)}
           onClose={() => {
             setIsDrawerOpen(false);
             setSelectedSeat(null);
@@ -355,7 +355,6 @@ const FloorsPage = () => {
           onSuccess={handleMutationSuccess}
         />
       )}
-
       {isAddFloor && (
         <AddFloorModal
           onClose={() => setIsAddFloor(false)}
@@ -373,7 +372,6 @@ const FloorsPage = () => {
           }}
         />
       )}
-
       {isAddSeat && (
         <AddSeatModal
           floorId={selectedFloor}

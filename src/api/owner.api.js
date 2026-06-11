@@ -32,7 +32,19 @@ const createSeat = async (floorId, data) => {
 const createBulkSeats = async (floorId, seats) => {
   return axiosInstance.post(`owner/floors/${floorId}/seats/bulk`, seats);
 };
-const updateSeatStatus = async (data) => {};
+
+const updateSeat = async (seatUpdateData) => {
+  const { floorId, seatId, data } = seatUpdateData;
+  return axiosInstance.patch(`owner/floors/${floorId}/seats/${seatId}`, data);
+};
+
+const updateSeatStatus = async (floorId, seatId, data) => {
+  return axiosInstance.patch(
+    `owner/floors/${floorId}/seats/${seatId}/status`,
+    data,
+  );
+};
+
 const deleteSeat = async (data) => {};
 
 const createSlot = async (data) => {
@@ -173,4 +185,5 @@ export {
   createBulkSeats,
   updateSeatStatus,
   deleteSeat,
+  updateSeat,
 };
