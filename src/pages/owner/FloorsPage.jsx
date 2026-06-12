@@ -340,7 +340,7 @@ const FloorsPage = () => {
           onSeatClick={handleSeatClick}
         />
       </div>
-      {/* {console.log(floors)} */}
+
       {isDrawerOpen && selectedSeat && (
         <SeatDrawer
           seat={selectedSeat}

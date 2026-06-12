@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Search, User, X as XIcon } from "lucide-react";
 import { getMembers } from "../../../api/owner.api";
+import { getPlans } from "../../../api/owner.api";
+import { createBooking } from "../../../api/owner.api";
+import BookingSuccess from "./BookingSuccess";
 
 const getTodayLocal = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
-// Add 30 days to a date string, return as YYYY-MM-DD
 const addThirtyDays = (dateStr) => {
   if (!dateStr) return "";
   const d = new Date(dateStr);
@@ -183,15 +185,29 @@ const BookingDrawer = ({ seat, slotId, slot, floor, onClose, onSuccess }) => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successBooking, setSuccessBooking] = useState(false);
 
-  // ── Fetch plan for this seat type + slot on mount ─────────────
   useEffect(() => {
     const fetchPlan = async () => {
-      // TODO: call getPlanForSeat({ timeSlotId: slotId, seatType: seat.seatType })
-      // then: setPlan(matching plan from results)
-      // catch: setPlanError("No plan found for this seat type and slot")
-      // finally: setPlanLoading(false)
-      setPlanLoading(false);
+      try {
+        setPlanLoading(true);
+        const res = await getPlans();
+
+        const allPlans = res?.data?.plans;
+        setPlan(
+          allPlans.filter((plan) => {
+            return (
+              plan.seatType === seat.seatType && plan.timeSlotId._id === slotId
+            );
+          }),
+        );
+        setPlanLoading(false);
+        setPlanError("");
+      } catch (error) {
+        setPlanError(error?.response?.data?.message);
+      } finally {
+        setPlanLoading(false);
+      }
     };
     fetchPlan();
   }, [seat.seatType, slotId]);
@@ -208,6 +224,33 @@ const BookingDrawer = ({ seat, slotId, slot, floor, onClose, onSuccess }) => {
     if (!selectedStudent) return setError("Please select a student");
     if (!plan) return setError("No plan available for this seat and slot");
     if (!startDate) return setError("Please select a start date");
+    try {
+      setLoading(true);
+      const res = await createBooking({
+        seatId: seat._id,
+        timeSlotId: slotId,
+        studentId: selectedStudent.userId._id,
+        startDate: startDate,
+      });
+
+      setTimeout(() => {
+        setSuccessBooking(false);
+        onSuccess();
+      }, 3000);
+
+      setLoading(false);
+      setError("");
+      setSuccessBooking(true);
+    } catch (error) {
+      setLoading(false);
+      let bookingError = "Somwthing went wrong";
+      if (error?.response?.data?.errors) {
+        bookingError = Object.values(error?.response?.data?.errors)[0];
+      } else {
+        bookingError = error?.response?.data?.message;
+      }
+      setError(bookingError);
+    }
   };
 
   return (
@@ -238,6 +281,8 @@ const BookingDrawer = ({ seat, slotId, slot, floor, onClose, onSuccess }) => {
               {error}
             </div>
           )}
+
+          {successBooking && <BookingSuccess />}
 
           <div>
             <label className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5 block">
@@ -282,7 +327,7 @@ const BookingDrawer = ({ seat, slotId, slot, floor, onClose, onSuccess }) => {
               </span>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className=" flex items-center justify-between">
               <span className="text-xs text-slate-500 dark:text-slate-400">
                 Plan & Price
               </span>
@@ -292,7 +337,7 @@ const BookingDrawer = ({ seat, slotId, slot, floor, onClose, onSuccess }) => {
                 <span className="text-xs text-red-500">{planError}</span>
               ) : plan ? (
                 <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  {plan.name} · ₹{plan.calculatedPrice}
+                  {plan[0]?.name} · ₹{plan[0]?.calculatedPrice}
                 </span>
               ) : (
                 <span className="text-xs text-slate-400">No plan found</span>
@@ -339,7 +384,6 @@ const BookingDrawer = ({ seat, slotId, slot, floor, onClose, onSuccess }) => {
             </div>
           </div>
 
-          {/* ── Price summary card ─────────────────────────── */}
           {plan && selectedStudent && (
             <div className="p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl">
               <div className="flex items-center justify-between">
@@ -347,7 +391,7 @@ const BookingDrawer = ({ seat, slotId, slot, floor, onClose, onSuccess }) => {
                   Total Amount
                 </span>
                 <span className="text-lg font-bold text-amber-700 dark:text-amber-400 font-['Playfair_Display']">
-                  ₹{plan.calculatedPrice}
+                  ₹{plan[0]?.calculatedPrice}
                 </span>
               </div>
               <p className="text-xs text-amber-600/70 dark:text-amber-500/70 mt-1">
@@ -368,7 +412,13 @@ const BookingDrawer = ({ seat, slotId, slot, floor, onClose, onSuccess }) => {
           </button>
           <button
             onClick={handleSubmit}
-            disabled={loading || !selectedStudent || !plan || planLoading}
+            disabled={
+              loading ||
+              !selectedStudent ||
+              !plan ||
+              planLoading ||
+              successBooking
+            }
             className="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600
               disabled:bg-amber-500/60 disabled:cursor-not-allowed
               text-slate-900 font-semibold rounded-xl

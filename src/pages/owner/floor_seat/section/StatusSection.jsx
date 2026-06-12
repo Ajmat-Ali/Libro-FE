@@ -49,12 +49,14 @@ const StatusSection = ({ seat, floorId, isOpen, onToggle, onSuccess }) => {
       onSuccess();
     } catch (error) {
       setLoading(false);
+
       let serverError = "Something went wrong";
       if (error?.response?.data?.errors) {
         serverError = Object.values(error?.response?.data?.errors)[0];
       } else {
         serverError = error?.response?.data?.message;
       }
+      setError(serverError);
     }
   };
 

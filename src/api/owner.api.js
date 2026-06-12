@@ -45,7 +45,9 @@ const updateSeatStatus = async (floorId, seatId, data) => {
   );
 };
 
-const deleteSeat = async (data) => {};
+const deleteSeat = async (floorId, seatId) => {
+  return axiosInstance.delete(`owner/floors/${floorId}/seats/${seatId}`);
+};
 
 const createSlot = async (data) => {
   const response = await axiosInstance.post("/owner/slots", data);
@@ -115,7 +117,7 @@ const getSeats = (floorId) =>
 
 const getSlots = () => axiosInstance.get("/owner/slots");
 
-const getPlans = (params) => axiosInstance.get("/owner/plans", { params });
+const getPlans = (params) => axiosInstance.get("/owner/plans", { params }); // ALl plans
 
 const getBookings = (params) =>
   axiosInstance.get("/owner/bookings", { params });

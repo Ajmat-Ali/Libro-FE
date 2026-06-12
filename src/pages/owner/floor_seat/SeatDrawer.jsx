@@ -100,7 +100,6 @@ const SeatDrawer = ({
             </button>
           )}
 
-          {/* 6 — Danger zone (delete) */}
           {gridStatus !== "booked" && gridStatus !== "expiring_soon" && (
             <DangerSection
               seat={seat}
@@ -110,20 +109,18 @@ const SeatDrawer = ({
           )}
         </div>
 
-        {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex-shrink-0">
           <button
             onClick={onClose}
             className="w-full py-2.5 border border-slate-200 dark:border-slate-700
-                       text-slate-700 dark:text-slate-300 font-medium rounded-xl
-                       hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-sm"
+              text-slate-700 dark:text-slate-300 font-medium rounded-xl
+              hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-sm"
           >
             Close
           </button>
         </div>
       </div>
 
-      {/* ── Second Drawer — Booking Form (renders on top) ─────── */}
       {showBookingDrawer && (
         <BookingDrawer
           seat={seat}

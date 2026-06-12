@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
+import { deleteSeat } from "../../../../api/owner.api";
+import SeatDeleteSuccess from "./SeatDeleteSuccess";
 
-// ─── Spinner ──────────────────────────────────────────────────────
 const Spinner = () => (
   <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
     <circle
@@ -16,24 +17,34 @@ const Spinner = () => (
   </svg>
 );
 
-// ─── DangerSection ────────────────────────────────────────────────
-// Delete seat with two-step confirmation
-// Only rendered when seat is NOT booked or expiring (parent controls this)
-// You wire up deleteSeat API call in handleDelete
-// Props:
-//   seat      → current seat object
-//   floorId   → for API call
-//   onSuccess → called after successful delete (closes drawer + refreshes grid)
 const DangerSection = ({ seat, floorId, onSuccess }) => {
-  const [confirmStep, setConfirmStep] = useState(false); // false = show button, true = show confirm
+  const [confirmStep, setConfirmStep] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successDelete, setSuccessDelete] = useState(false);
 
-  // ── handleDelete — wire your deleteSeat API call here ─────────
-  // You receive: floorId, seat._id
   const handleDelete = async () => {
-    // TODO: call deleteSeat(floorId, seat._id)
-    // then call onSuccess()
+    try {
+      setLoading(true);
+      await deleteSeat(floorId, seat._id);
+      setTimeout(() => {
+        setSuccessDelete(false);
+        onSuccess();
+      }, 3000);
+
+      setLoading(false);
+      setError("");
+      setSuccessDelete(true);
+    } catch (error) {
+      setLoading(false);
+      let serverError = "Something went wrong!";
+      if (error?.response?.data?.errors) {
+        serverError = Object.values(error?.response?.data?.errors)[0];
+      } else {
+        serverError = error?.response?.data?.message;
+      }
+      setError(serverError);
+    }
   };
 
   return (
@@ -55,21 +66,23 @@ const DangerSection = ({ seat, floorId, onSuccess }) => {
         </div>
       )}
 
-      {/* Step 1 — initial delete button */}
+      {successDelete && (
+        <SeatDeleteSuccess close={() => setSuccessDelete(false)} />
+      )}
+
       {!confirmStep && (
         <button
           onClick={() => setConfirmStep(true)}
           className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-xl transition-all
-                     bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400
-                     hover:bg-red-100 dark:hover:bg-red-500/20
-                     border border-red-200 dark:border-red-500/30"
+            bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400
+            hover:bg-red-100 dark:hover:bg-red-500/20
+            border border-red-200 dark:border-red-500/30"
         >
           <Trash2 className="w-4 h-4" />
           Delete Seat
         </button>
       )}
 
-      {/* Step 2 — confirmation */}
       {confirmStep && (
         <div className="space-y-2">
           <p className="text-xs text-red-600 dark:text-red-400 font-medium text-center">
@@ -81,21 +94,21 @@ const DangerSection = ({ seat, floorId, onSuccess }) => {
                 setConfirmStep(false);
                 setError("");
               }}
-              disabled={loading}
+              disabled={loading || successDelete}
               className="flex-1 py-2.5 border border-slate-200 dark:border-slate-700
-                         text-slate-700 dark:text-slate-300 text-sm font-medium
-                         rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700
-                         transition-all disabled:opacity-50"
+                text-slate-700 dark:text-slate-300 text-sm font-medium
+                rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700
+                transition-all disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               onClick={handleDelete}
-              disabled={loading}
+              disabled={loading || successDelete}
               className="flex-1 py-2.5 bg-red-600 hover:bg-red-700
-                         disabled:opacity-60 disabled:cursor-not-allowed
-                         text-white text-sm font-semibold rounded-xl
-                         transition-all flex items-center justify-center gap-2"
+                disabled:opacity-60 disabled:cursor-not-allowed
+                text-white text-sm font-semibold rounded-xl
+                transition-all flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
