@@ -152,6 +152,32 @@ const getGuards = () => axiosInstance.get("/owner/guards");
 const createGuard = (data) => axiosInstance.post("/owner/guards", data);
 const deactivateGuard = (id) => axiosInstance.delete(`/owner/guards/${id}`);
 
+// ----------------------------------- Payment --------------------------------------------
+
+export const getPayments = (params) =>
+  axiosInstance.get("/payments", { params });
+
+export const getOnePayment = (paymentId) =>
+  axiosInstance.get(`/payments/${paymentId}`);
+
+export const recordCashPayment = (paymentId) =>
+  axiosInstance.post(`/payments/${paymentId}/record-cash`);
+
+export const downloadReceipt = async (paymentId) => {
+  const response = await axiosInstance.get(`/payments/${paymentId}/receipt`, {
+    responseType: "blob",
+  });
+
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `receipt-${paymentId}.pdf`);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+};
+
 export {
   getOwnerLibrary,
   getOwnerDashboard,

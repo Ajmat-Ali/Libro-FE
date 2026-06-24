@@ -260,7 +260,7 @@ const FloorsPage = () => {
       </div>
       <div className="px-4 lg:px-6 -mt-10 pb-10 space-y-4">
         <div className=" bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700">
-          <div className="flex flex-wrap gap-3">
+          <div className=" flex flex-wrap gap-3">
             <FilterSelect
               label="Floor"
               value={selectedFloor}
@@ -273,7 +273,6 @@ const FloorsPage = () => {
               placeholder={dropdownsLoading ? "Loading..." : "Select floor"}
               disabled={dropdownsLoading}
             />
-
             <FilterSelect
               label="Time Slot"
               value={selectedSlot}
@@ -282,7 +281,6 @@ const FloorsPage = () => {
               placeholder={dropdownsLoading ? "Loading..." : "Select slot"}
               disabled={dropdownsLoading}
             />
-
             <div className="flex-1 min-w-[160px]">
               <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
                 Date
