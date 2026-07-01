@@ -12,6 +12,7 @@ function App() {
     const restoreSession = async () => {
       try {
         const response = await refreshToken();
+
         dispatch(
           setCredentials({
             user: response.userData,

@@ -1,5 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { Plus, LayoutGrid } from "lucide-react";
+import {
+  Plus,
+  LayoutGrid,
+  CircleFadingPlus,
+  EllipsisVertical,
+} from "lucide-react";
 import { getFloors, getSlots, getSeatGrid } from "../../api/owner.api";
 import SeatGrid from "./floor_seat/SeatGrid";
 import AddFloorModal from "./floor_seat/AddFloorModel";
@@ -135,10 +140,13 @@ const FloorsPage = () => {
   const [gridLoading, setGridLoading] = useState(false);
   const [gridError, setGridError] = useState("");
 
-  const [selectedSeat, setSelectedSeat] = useState(null); // seat clicked by owner
+  const [selectedSeat, setSelectedSeat] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isAddFloor, setIsAddFloor] = useState(false);
   const [isAddSeat, setIsAddSeat] = useState(false);
+
+  const [open, setOpen] = useState(false);
+  const [openMore, setOpenMore] = useState(null);
 
   useEffect(() => {
     const fetchDropdowns = async () => {
@@ -224,7 +232,7 @@ const FloorsPage = () => {
 
   return (
     <div className="font-['DM_Sans']">
-      <div className=" bg-slate-900 px-4 lg:px-6 pt-6 pb-16">
+      <div className="bg-slate-900 px-4 lg:px-6 pt-6 pb-16">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-xl font-bold text-white font-['Playfair_Display']">
@@ -258,7 +266,7 @@ const FloorsPage = () => {
           </div>
         </div>
       </div>
-      <div className="px-4 lg:px-6 -mt-10 pb-10 space-y-4">
+      <div className=" px-4 lg:px-6 -mt-10 pb-10 space-y-4">
         <div className=" bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700">
           <div className=" flex flex-wrap gap-3">
             <FilterSelect
@@ -337,6 +345,55 @@ const FloorsPage = () => {
           bothSelected={bothSelected}
           onSeatClick={handleSeatClick}
         />
+      </div>
+
+      <div className="fixed bottom-5 right-5 z-50">
+        <div
+          className={`
+            absolute bottom-14 right-0 max-h-[70vh] overflow-y-auto
+            rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white
+            border border-slate-200 dark:border-slate-700 shadow-2xl backdrop-blur-sm
+            p-5 transition-all duration-300 ease-in-out origin-bottom-right
+            ${
+              open
+                ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
+                : "opacity-0 scale-95 translate-y-2 pointer-events-none"
+            }
+          `}
+        >
+          {floors.map((floor, ind) => (
+            <div key={floor._id} className="flex justify-between mb-5">
+              <div>{floor.label}</div>
+              <div className="relative">
+                <div
+                  className={`absolute bottom-5 right-4 ${openMore === ind ? "block" : "hidden"} border-5`}
+                >
+                  <span className="mx-3 text-blue-500">Update</span>
+                  <span className="">Delete</span>
+                </div>
+                <button
+                  onClick={() => {
+                    if (ind === openMore) {
+                      setOpenMore(null);
+                      return;
+                    }
+                    setOpenMore(ind);
+                  }}
+                  className="cursor-pointer"
+                >
+                  <EllipsisVertical />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <button
+          onClick={() => setOpen(!open)}
+          className="rounded-lg bg-slate-800 dark:bg-white text-white dark:text-slate-800 cursor-pointer p-2 shadow-lg"
+        >
+          <CircleFadingPlus size={30} />
+        </button>
       </div>
 
       {isDrawerOpen && selectedSeat && (
