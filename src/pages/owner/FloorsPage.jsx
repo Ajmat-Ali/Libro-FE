@@ -5,11 +5,22 @@ import {
   CircleFadingPlus,
   EllipsisVertical,
 } from "lucide-react";
-import { getFloors, getSlots, getSeatGrid } from "../../api/owner.api";
+import {
+  getFloors,
+  getSlots,
+  getSeatGrid,
+  updateFloor,
+  deleteFloor,
+} from "../../api/owner.api";
 import SeatGrid from "./floor_seat/SeatGrid";
 import AddFloorModal from "./floor_seat/AddFloorModel";
 import AddSeatModal from "./floor_seat/AddSeatModel";
 import SeatDrawer from "./floor_seat/SeatDrawer";
+import FloorOperation from "./floor_seat/section/FloorOperation";
+import FilterSelect from "./floor_seat/section/FilterSelect";
+import SummaryBar from "./floor_seat/section/SummaryBar";
+
+import Toast from "./floor_seat/section/Toast";
 
 const getTodayLocal = () => {
   const d = new Date();
@@ -18,111 +29,6 @@ const getTodayLocal = () => {
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
 };
-
-const Spinner = ({ size = "w-4 h-4" }) => (
-  <svg className={`animate-spin ${size}`} viewBox="0 0 24 24" fill="none">
-    <circle
-      className="opacity-25"
-      cx="12"
-      cy="12"
-      r="10"
-      stroke="currentColor"
-      strokeWidth="4"
-    />
-    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-  </svg>
-);
-
-const SummaryBar = ({ summary }) => {
-  if (!summary) return null;
-
-  const pills = [
-    {
-      key: "available",
-      label: "Available",
-      color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-    },
-    {
-      key: "booked",
-      label: "Booked",
-      color: "bg-red-500/15 text-red-600 dark:text-red-400",
-    },
-    {
-      key: "expiringSoon",
-      label: "Expiring Soon",
-      color: "bg-orange-500/15 text-orange-600 dark:text-orange-400",
-    },
-    {
-      key: "maintenance",
-      label: "Maintenance",
-      color: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400",
-    },
-    {
-      key: "reserved",
-      label: "Reserved",
-      color: "bg-purple-500/15 text-purple-600 dark:text-purple-400",
-    },
-    {
-      key: "disabled",
-      label: "Disabled",
-      color: "bg-slate-500/15 text-slate-500 dark:text-slate-400",
-    },
-  ];
-
-  return (
-    <div className="flex flex-wrap gap-2 mt-4">
-      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 self-center mr-1">
-        {summary.total} seats
-      </span>
-
-      {pills.map(({ key, label, color }) => {
-        if (!summary[key]) return null;
-        return (
-          <span
-            key={key}
-            className={`text-xs font-medium px-2.5 py-1 rounded-full ${color}`}
-          >
-            {summary[key]} {label}
-          </span>
-        );
-      })}
-    </div>
-  );
-};
-
-const FilterSelect = ({
-  label,
-  value,
-  onChange,
-  options,
-  placeholder,
-  disabled,
-}) => (
-  <div className="flex-1 min-w-[160px]">
-    <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
-      {label}
-    </label>
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      disabled={disabled}
-      className="w-full px-3.5 py-2.5 rounded-xl border text-sm
-        text-slate-900 dark:text-white
-        bg-white dark:bg-slate-800
-        border-slate-200 dark:border-slate-700
-        focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20
-        outline-none transition-all
-        disabled:opacity-50 disabled:cursor-not-allowed "
-    >
-      <option value="">{placeholder}</option>
-      {options.map((o) => (
-        <option key={o._id} value={o._id}>
-          {o.label}
-        </option>
-      ))}
-    </select>
-  </div>
-);
 
 const FloorsPage = () => {
   const [selectedFloor, setSelectedFloor] = useState("");
@@ -145,40 +51,43 @@ const FloorsPage = () => {
   const [isAddFloor, setIsAddFloor] = useState(false);
   const [isAddSeat, setIsAddSeat] = useState(false);
 
-  const [open, setOpen] = useState(false);
-  const [openMore, setOpenMore] = useState(null);
+  const [updating, setUpdating] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastData, setToastData] = useState({ type: "", message: "" });
+
+  const [deleting, setDeleting] = useState(false);
+
+  const fetchDropdowns = async () => {
+    try {
+      setDropdownsLoading(true);
+      const [floorsRes, slotsRes] = await Promise.all([
+        getFloors(),
+        getSlots(),
+      ]);
+
+      setFloors(
+        floorsRes.data.floors.map((f) => ({
+          _id: f._id,
+          label: `${f.name} (Floor ${f.number})`,
+          raw: f,
+        })),
+      );
+
+      setSlots(
+        slotsRes.data.slots.map((s) => ({
+          _id: s._id,
+          label: `${s.name} · ${s.startTimeDisplay} - ${s.endTimeDisplay}`,
+          raw: s,
+        })),
+      );
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setDropdownsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDropdowns = async () => {
-      try {
-        setDropdownsLoading(true);
-        const [floorsRes, slotsRes] = await Promise.all([
-          getFloors(),
-          getSlots(),
-        ]);
-
-        setFloors(
-          floorsRes.data.floors.map((f) => ({
-            _id: f._id,
-            label: `${f.name} (Floor ${f.number})`,
-            raw: f,
-          })),
-        );
-
-        setSlots(
-          slotsRes.data.slots.map((s) => ({
-            _id: s._id,
-            label: `${s.name} · ${s.startTimeDisplay} - ${s.endTimeDisplay}`,
-            raw: s,
-          })),
-        );
-      } catch (error) {
-        console.log(error.message);
-      } finally {
-        setDropdownsLoading(false);
-      }
-    };
-
     fetchDropdowns();
   }, []);
 
@@ -229,6 +138,64 @@ const FloorsPage = () => {
   const todayString = getTodayLocal();
 
   const bothSelected = selectedFloor && selectedSlot;
+
+  const handleDeleteFloor = async (id) => {
+    try {
+      setDeleting(true);
+      await deleteFloor(id);
+
+      setShowToast(true);
+      setToastData({ type: "success", message: "Floor deleted successfully." });
+      setDeleting(false);
+      fetchDropdowns();
+    } catch (error) {
+      setDeleting(false);
+      setShowToast(true);
+      setToastData({
+        type: "fail",
+        message:
+          error?.response?.data?.message ||
+          "Something went wrong while updating the floor.",
+      });
+    } finally {
+      setTimeout(() => {
+        setShowToast(false);
+        setToastData({
+          type: "",
+          message: "",
+        });
+      }, 3000);
+    }
+  };
+
+  const handleUpdateFloorSave = async (floorData) => {
+    try {
+      setUpdating(true);
+      await updateFloor(floorData);
+      setShowToast(true);
+      setToastData({ type: "success", message: "Floor updated successfully." });
+
+      setUpdating(false);
+      fetchDropdowns();
+    } catch (error) {
+      setUpdating(false);
+      setShowToast(true);
+      setToastData({
+        type: "success",
+        message:
+          error?.response?.data?.message ||
+          "Something went wrong while updating the floor.",
+      });
+    } finally {
+      setTimeout(() => {
+        setShowToast(false);
+        setToastData({
+          type: "",
+          message: "",
+        });
+      }, 3000);
+    }
+  };
 
   return (
     <div className="font-['DM_Sans']">
@@ -347,54 +314,13 @@ const FloorsPage = () => {
         />
       </div>
 
-      <div className="fixed bottom-5 right-5 z-50">
-        <div
-          className={`
-            absolute bottom-14 right-0 max-h-[70vh] overflow-y-auto
-            rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white
-            border border-slate-200 dark:border-slate-700 shadow-2xl backdrop-blur-sm
-            p-5 transition-all duration-300 ease-in-out origin-bottom-right
-            ${
-              open
-                ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
-                : "opacity-0 scale-95 translate-y-2 pointer-events-none"
-            }
-          `}
-        >
-          {floors.map((floor, ind) => (
-            <div key={floor._id} className="flex justify-between mb-5">
-              <div>{floor.label}</div>
-              <div className="relative">
-                <div
-                  className={`absolute bottom-5 right-4 ${openMore === ind ? "block" : "hidden"} border-5`}
-                >
-                  <span className="mx-3 text-blue-500">Update</span>
-                  <span className="">Delete</span>
-                </div>
-                <button
-                  onClick={() => {
-                    if (ind === openMore) {
-                      setOpenMore(null);
-                      return;
-                    }
-                    setOpenMore(ind);
-                  }}
-                  className="cursor-pointer"
-                >
-                  <EllipsisVertical />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <button
-          onClick={() => setOpen(!open)}
-          className="rounded-lg bg-slate-800 dark:bg-white text-white dark:text-slate-800 cursor-pointer p-2 shadow-lg"
-        >
-          <CircleFadingPlus size={30} />
-        </button>
-      </div>
+      <FloorOperation
+        floors={floors}
+        handleDeleteFloor={handleDeleteFloor}
+        handleUpdateFloorSave={handleUpdateFloorSave}
+        updating={updating}
+      />
+      {showToast && toastData?.type && <Toast toastData={toastData} />}
 
       {isDrawerOpen && selectedSeat && (
         <SeatDrawer

@@ -21,6 +21,15 @@ const createFloor = async (data) => {
   return response.data;
 };
 
+const updateFloor = async (floorData) => {
+  const { value, id } = floorData;
+  return await axiosInstance.patch(`owner/floors/${id}`, { name: value });
+};
+
+const deleteFloor = async (id) => {
+  return await axiosInstance.delete(`owner/floors/${id}`);
+};
+
 const createSeat = async (floorId, data) => {
   const response = await axiosInstance.post(
     `/owner/floors/${floorId}/seats`,
@@ -214,4 +223,6 @@ export {
   updateSeatStatus,
   deleteSeat,
   updateSeat,
+  updateFloor,
+  deleteFloor,
 };
