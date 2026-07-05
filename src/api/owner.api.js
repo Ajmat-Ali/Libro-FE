@@ -58,9 +58,23 @@ const deleteSeat = async (floorId, seatId) => {
   return axiosInstance.delete(`owner/floors/${floorId}/seats/${seatId}`);
 };
 
+// -------------------------------- Slots --------------------------
+
 const createSlot = async (data) => {
   const response = await axiosInstance.post("/owner/slots", data);
   return response.data;
+};
+
+const togglePlanStatus = async () => {
+  return;
+};
+
+const updateSlot = async () => {
+  return;
+};
+
+const deleteSlot = async () => {
+  return;
 };
 
 const getSeatGrid = async (floorId, data) => {
@@ -126,7 +140,7 @@ const getSeats = (floorId) =>
 
 const getSlots = () => axiosInstance.get("/owner/slots");
 
-const getPlans = (params) => axiosInstance.get("/owner/plans", { params }); // ALl plans
+const getPlans = (params) => axiosInstance.get("/owner/plans", { params });
 
 const getBookings = (params) =>
   axiosInstance.get("/owner/bookings", { params });
@@ -225,4 +239,7 @@ export {
   updateSeat,
   updateFloor,
   deleteFloor,
+  togglePlanStatus,
+  updateSlot,
+  deleteSlot,
 };
