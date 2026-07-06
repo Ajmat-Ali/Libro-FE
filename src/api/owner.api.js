@@ -65,15 +65,15 @@ const createSlot = async (data) => {
   return response.data;
 };
 
+const updateSlot = async (slotId, data) => {
+  return axiosInstance.patch(`/owner/slots/${slotId}`, data);
+};
+
+const deleteSlot = async (slotId) => {
+  return axiosInstance.delete(`/owner/slots/${slotId}`);
+};
+
 const togglePlanStatus = async () => {
-  return;
-};
-
-const updateSlot = async () => {
-  return;
-};
-
-const deleteSlot = async () => {
   return;
 };
 
