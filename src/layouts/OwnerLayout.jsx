@@ -34,8 +34,8 @@ const navLinks = [
   { to: "/owner/floors", label: "Floors & Seats", icon: Building2 },
   { to: "/owner/slots", label: "Slots & Plans", icon: Clock },
   { to: "/owner/attendance", label: "Attendance", icon: ClipboardList },
-  { to: "/owner/announcements", label: "Announcements", icon: Megaphone },
-  { to: "/owner/reports", label: "Reports", icon: BarChart3 },
+  // { to: "/owner/announcements", label: "Announcements", icon: Megaphone },
+  // { to: "/owner/reports", label: "Reports", icon: BarChart3 },
   { to: "/owner/settings", label: "Settings", icon: Settings },
 ];
 

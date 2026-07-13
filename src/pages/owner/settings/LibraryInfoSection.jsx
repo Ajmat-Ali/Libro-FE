@@ -100,6 +100,7 @@ export default function LibraryInfoSection() {
 
   const handleLogoChange = (e) => {
     const file = e.target.files?.[0];
+
     if (!file) return;
     setLogoFile(file);
     setLogoPreview(URL.createObjectURL(file));
@@ -133,7 +134,7 @@ export default function LibraryInfoSection() {
         </p>
       </div>
 
-      <div className="flex items-center gap-5">
+      <div className=" flex items-center gap-5">
         <div className="relative">
           <div className="w-20 h-20 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 overflow-hidden flex items-center justify-center">
             {logoPreview ? (
@@ -147,7 +148,9 @@ export default function LibraryInfoSection() {
             )}
           </div>
           <button
-            onClick={() => fileRef.current?.click()}
+            onClick={() => {
+              fileRef.current?.click();
+            }}
             className="absolute -bottom-2 -right-2 w-7 h-7 rounded-full bg-amber-500 hover:bg-amber-600 text-white flex items-center justify-center shadow-md transition-colors"
           >
             <Camera className="w-3.5 h-3.5" />

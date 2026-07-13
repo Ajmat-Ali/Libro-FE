@@ -68,7 +68,6 @@ const AppRouter = () => {
         </Route>
 
         {/* --------------------- Owner ------------------------- */}
-
         <Route element={<ProtectedRoute allowedRoles={["owner"]} />}>
           <Route path="/owner/setup" element={<OwnerSetup />} />
           <Route element={<OwnerLayout />}>
@@ -95,12 +94,23 @@ const AppRouter = () => {
             <Route path="/owner/settings" element={<SettingsPage />} />
           </Route>
         </Route>
+        {/* ------------------------------------ Student ---------------------------------- */}
         <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
           <Route path="/student/dashboard" element={<StudentDashboard />} />
         </Route>
+        {/* ------------------------------------ Guard ---------------------------------- */}
         <Route element={<ProtectedRoute allowedRoles={["guard"]} />}>
           <Route path="/guard/scan" element={<GuardScanPage />} />
         </Route>
+        <Route
+          path="*"
+          element={
+            <h1 className="text-xl text-red-500 font-bold text-center mt-30">
+              {" "}
+              No Page found
+            </h1>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

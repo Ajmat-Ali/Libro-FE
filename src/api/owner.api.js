@@ -201,6 +201,16 @@ export const downloadReceipt = async (paymentId) => {
   window.URL.revokeObjectURL(url);
 };
 
+// ----------------------------------- Attendance ------------------------
+
+const getDailyAttendance = (date) =>
+  axiosInstance.get("/owner/attendance/daily", { params: { date } });
+
+const getAbsentees = () => axiosInstance.get("/owner/attendance/absentees");
+
+const getStudentAttendance = (studentId, params) =>
+  axiosInstance.get(`/owner/attendance/student/${studentId}`, { params });
+
 export {
   getOwnerLibrary,
   getOwnerDashboard,
@@ -242,4 +252,7 @@ export {
   togglePlanStatus,
   updateSlot,
   deleteSlot,
+  getDailyAttendance,
+  getAbsentees,
+  getStudentAttendance,
 };
