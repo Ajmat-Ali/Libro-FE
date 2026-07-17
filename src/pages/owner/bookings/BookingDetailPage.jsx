@@ -164,7 +164,7 @@ export default function BookingDetailPage() {
       </div>
 
       {cardLoading ? (
-        <div className="w-[400px] h-[248px] rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+        <div className="w-[400px] h-[248px] rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse m-auto mb-10" />
       ) : (
         <MemberIdCard
           booking={booking}
@@ -175,7 +175,6 @@ export default function BookingDetailPage() {
         />
       )}
 
-      {/* Page title */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white font-['Playfair_Display']">
           Booking Detail
@@ -187,7 +186,6 @@ export default function BookingDetailPage() {
         )}
       </div>
 
-      {/* Error state */}
       {error && (
         <div className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 rounded-2xl border border-red-100 dark:border-red-800/40 mb-6">
           <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
@@ -208,10 +206,8 @@ export default function BookingDetailPage() {
         </div>
       )}
 
-      {/* Loading */}
       {loading && <DetailSkeleton />}
 
-      {/* Content */}
       {!loading && !error && booking && (
         <div className="space-y-6">
           {/* Detail card */}
