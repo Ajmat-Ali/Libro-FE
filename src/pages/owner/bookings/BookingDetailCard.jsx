@@ -68,7 +68,7 @@ const PAYMENT_CONFIG = {
   },
 };
 
-function fmtDateTime(d) {
+export function fmtDateTime(d) {
   if (!d) return "—";
   return new Date(d).toLocaleString("en-IN", {
     day: "2-digit",

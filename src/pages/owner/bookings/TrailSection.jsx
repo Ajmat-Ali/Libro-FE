@@ -1,4 +1,5 @@
 import { Ban, Calendar, CheckCircle2, Link2, XCircle } from "lucide-react";
+import { fmtDateTime } from "./BookingDetailCard";
 
 function TrailSection({ booking }) {
   const items = [];
