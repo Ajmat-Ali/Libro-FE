@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import LoginPage from "../pages/auth/LoginPage";
 import OwnerDashboard from "../pages/owner/OwnerDashboard";
@@ -24,11 +24,12 @@ import BookingDetailPage from "../pages/owner/bookings/BookingDetailPage";
 
 // ---------------------------------- Auth Pages ---------------------
 import RegisterPage from "../pages/auth/RegisterPage";
-
 import AuthLayout from "../pages/auth/AuthLayout";
 import VerifyOTPPage from "../pages/auth/VerifyOtpPage";
 import ForgotPasswordPage from "../pages/auth/ForgotPassword";
 import ResetPasswordPage from "../pages/auth/ResetPassword";
+
+import { lazy } from "react";
 
 const AppRouter = () => {
   return (

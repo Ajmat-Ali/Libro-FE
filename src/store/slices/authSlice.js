@@ -4,6 +4,7 @@ const initialState = {
   user: null,
   accessToken: null,
   isAuthenticated: false,
+  error: "",
 };
 
 const authSlice = createSlice({
@@ -14,6 +15,7 @@ const authSlice = createSlice({
       state.user = action.payload.user;
       state.accessToken = action.payload.accessToken;
       state.isAuthenticated = true;
+      state.error = action.payload.error;
     },
     clearCredentials: (state) => {
       state.user = null;

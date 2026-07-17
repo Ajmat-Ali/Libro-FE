@@ -1,5 +1,5 @@
 import { Eye, EyeOff, ImagePlus, ShieldCheck, Upload } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { registerStudent } from "../../api/auth.api";
@@ -9,17 +9,17 @@ const RegisterPage = () => {
   const [toast, setToast] = useState(null);
   const navigate = useNavigate();
 
+  const profilePicRef = useRef(null);
+  const idProofRef = useRef(null);
+
   const getErrorMessage = (error) => {
     const response = error?.response?.data;
-
     if (response?.errors) {
       return Object.values(response.errors)[0];
     }
-
     if (response?.message) {
       return response.message;
     }
-
     return "Something went wrong";
   };
 
@@ -37,7 +37,22 @@ const RegisterPage = () => {
 
   const onSubmit = async (data) => {
     try {
-      const res = await registerStudent(data);
+      const fd = new FormData();
+
+      fd.append("firstName", data?.firstName);
+      fd.append("lastName", data?.lastName);
+      fd.append("email", data?.email);
+      fd.append("password", data?.password);
+      fd.append("phone", data?.phone);
+      fd.append("address", data?.address);
+
+      const profilePic = profilePicRef.current?.files[0];
+      const idProof = idProofRef.current?.files[0];
+
+      fd.append("profilePic", profilePic);
+      fd.append("idProof", idProof);
+
+      const res = await registerStudent(fd);
 
       if (res.status === 201) {
         localStorage.setItem("email", JSON.stringify(data.email));
@@ -120,7 +135,6 @@ const RegisterPage = () => {
           </div>
         </div>
 
-        {/* Email */}
         <div>
           <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 block">
             Email Address *
@@ -141,7 +155,6 @@ const RegisterPage = () => {
           {errors.email && <p>{errors.email.message}</p>}
         </div>
 
-        {/* Password */}
         <div>
           <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5 block">
             Password *
@@ -232,7 +245,6 @@ const RegisterPage = () => {
           {errors.address && <p>{errors.address.message}</p>}
         </div>
 
-        {/* Upload Section */}
         <div className="space-y-4">
           {/* Photo Upload */}
           <div>
@@ -253,7 +265,7 @@ const RegisterPage = () => {
                 PNG, JPG up to 5MB
               </p>
 
-              <input type="file" className="hidden" />
+              <input type="file" className="hidden" ref={profilePicRef} />
             </label>
           </div>
 
@@ -276,12 +288,11 @@ const RegisterPage = () => {
                 Aadhaar, PAN, Voter ID, Driving Licence, etc.
               </p>
 
-              <input type="file" className="hidden" />
+              <input type="file" className="hidden" ref={idProofRef} />
             </label>
           </div>
         </div>
 
-        {/* Info Box */}
         <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
           <p className="text-xs leading-relaxed text-amber-700 dark:text-amber-400">
             Your account details and uploaded documents are securely protected.
@@ -289,7 +300,6 @@ const RegisterPage = () => {
           </p>
         </div>
 
-        {/* Terms */}
         <div className="flex items-start gap-3">
           <input
             type="checkbox"
@@ -315,39 +325,6 @@ const RegisterPage = () => {
           </p>
         </div>
 
-        {/* Register Button */}
-        {/* <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-[0.99] text-slate-900 font-bold text-sm transition-all shadow-lg shadow-amber-500/20"
-        >
-          {isSubmitting ? (
-            <>
-              <svg
-                className="animate-spin w-4 h-4"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v8z"
-                />
-              </svg>
-              Registering...
-            </>
-          ) : (
-            "Create Account"
-          )}
-        </button> */}
         <button
           type="submit"
           disabled={isSubmitting}
@@ -405,7 +382,6 @@ const RegisterPage = () => {
           )}
         </button>
 
-        {/* Login redirect */}
         <div className="text-center pt-1">
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Already have an account?{" "}

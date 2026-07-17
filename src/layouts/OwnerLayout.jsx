@@ -54,6 +54,7 @@ const OwnerLayout = () => {
         const response = await getOwnerLibrary();
         dispatch(setLibrary(response.library));
       } catch (error) {
+        console.log(error.response);
         if (error.response?.status === 404) {
           navigate("/owner/setup", { replace: true });
           return;

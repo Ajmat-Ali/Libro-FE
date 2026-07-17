@@ -1,8 +1,3 @@
-// src/pages/auth/AuthLayout.jsx
-// Shared layout for all auth pages.
-// Left: decorative panel (hidden on mobile)
-// Right: form content (passed as children)
-
 import { BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -16,7 +11,6 @@ const QUOTES = [
   { text: "A book is a dream you hold in your hands.", author: "Neil Gaiman" },
 ];
 
-// Pick a stable quote based on current day
 const quote = QUOTES[new Date().getDay() % QUOTES.length];
 
 export default function AuthLayout({ children, title, subtitle }) {
@@ -152,7 +146,6 @@ export default function AuthLayout({ children, title, subtitle }) {
               </div>
             )}
 
-            {/* Children (the form) */}
             {children}
           </div>
         </div>
