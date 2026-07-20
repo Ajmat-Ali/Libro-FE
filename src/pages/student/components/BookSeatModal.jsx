@@ -1,13 +1,22 @@
 import { useEffect, useState } from "react";
 import { X, MapPin, Clock, IndianRupee, Calendar, Loader2 } from "lucide-react";
 import { formatDate } from "../../../utils/dateUtils";
-import { getAllPLans } from "../../../api/student.api";
+import { getAllPLans, initiateStudentBooking } from "../../../api/student.api";
+import { useNavigate } from "react-router-dom";
+import loadRazorpayScript from "../../../utils/loadRazorpayScript";
+import { LIBRARY_NAME } from "../../../constant";
 
 const SEAT_TYPE_STYLES = {
   general: "bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300",
   vip: "bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400",
   window: "bg-sky-50 text-sky-600 dark:bg-sky-500/10 dark:text-sky-400",
   cabin: "bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400",
+};
+
+const STAGE = {
+  IDLE: "idle",
+  PROCESSING: "processing", // creating order, opening checkout
+  CONFIRMING: "confirming", // payment done in popup, waiting a beat before redirect
 };
 
 const BookSeatModal = ({
@@ -22,24 +31,84 @@ const BookSeatModal = ({
 
   if (!seatData) return null;
 
-  //   console.log(seatData.gridStatus);
+  const navigate = useNavigate();
 
   const [plan, setPlan] = useState(null);
   const [planLoading, setPlanLoading] = useState(false);
   const [planError, setPlanError] = useState("");
 
+  const [stage, setStage] = useState(STAGE.IDLE);
+  const [error, setError] = useState("");
+
   const { seat } = seatData;
   const slot = slotData[0].raw;
   const floor = floorData[0].raw;
 
-  const handleConfirm = async () => {
+  const handleBookAndPay = async () => {
     setSubmitting(true);
+    setError("");
+    setStage(STAGE.PROCESSING);
+
     try {
-      await onConfirm({
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        setError(
+          "Could not load payment gateway. Check your internet connection and try again.",
+        );
+        setStage(STAGE.IDLE);
+        return;
+      }
+
+      const res = await initiateStudentBooking({
         seatId: seat._id,
         timeSlotId: slot._id,
         startDate: selectedDate,
       });
+      const { order, razorpayKeyId, bookingPreview } = res.data;
+
+      const options = {
+        key: razorpayKeyId,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.id,
+        name: LIBRARY_NAME,
+        description: `Seat ${bookingPreview.seatLabel} · ${bookingPreview.slotName}`,
+        theme: { color: "#F59E0B" },
+
+        handler: () => {
+          setStage(STAGE.CONFIRMING);
+          setTimeout(() => {
+            navigate("/student/dashboard");
+          }, 2500);
+        },
+
+        modal: {
+          ondismiss: () => {
+            setStage(STAGE.IDLE);
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+
+      rzp.on("payment.failed", () => {
+        setError("Payment failed. Please try again.");
+        setStage(STAGE.IDLE);
+      });
+
+      rzp.open();
+
+      //-------
+    } catch (err) {
+      let errorMessage = "Something went wrong";
+      console.log(err.response.data?.errors);
+      if (err?.response.data?.errors) {
+        errorMessage = Object.values(err.response.data?.errors)[0];
+      } else {
+        errorMessage = Object.values(err.response.data?.message);
+      }
+      setError(errorMessage);
+      setStage(STAGE.IDLE);
     } finally {
       setSubmitting(false);
     }
@@ -79,6 +148,25 @@ const BookSeatModal = ({
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, [onClose]);
+
+  if (stage === STAGE.CONFIRMING) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+        <div className="relative bg-white dark:bg-slate-800 rounded-2xl p-8 text-center max-w-xs mx-4">
+          <Loader2 size={32} className="animate-spin text-amber-500 mx-auto" />
+          <p className="mt-4 text-sm font-medium text-slate-700 dark:text-slate-200">
+            Payment received — confirming your booking...
+          </p>
+          <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+            This usually takes a few seconds
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const isProcessing = stage === STAGE.PROCESSING;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
@@ -138,15 +226,29 @@ const BookSeatModal = ({
         </div>
 
         {seatData.gridStatus === "available" ? (
+          //   <button
+          //     onClick={handleConfirm}
+          //     disabled={submitting}
+          //     className="cursor-pointer w-full mt-5 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white font-medium text-sm py-3 rounded-xl transition flex items-center justify-center gap-2"
+          //   >
+          //     {submitting ? (
+          //       <>
+          //         <Loader2 size={16} className="animate-spin" />
+          //         Processing...
+          //       </>
+          //     ) : (
+          //       "Book & Pay"
+          //     )}
+          //   </button>
           <button
-            onClick={handleConfirm}
-            disabled={submitting}
-            className="cursor-pointer w-full mt-5 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white font-medium text-sm py-3 rounded-xl transition flex items-center justify-center gap-2"
+            onClick={handleBookAndPay}
+            disabled={isProcessing}
+            className="w-full mt-5 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white font-medium text-sm py-3 rounded-xl transition flex items-center justify-center gap-2"
           >
-            {submitting ? (
+            {isProcessing ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
-                Processing...
+                Opening payment...
               </>
             ) : (
               "Book & Pay"
@@ -166,5 +268,3 @@ const BookSeatModal = ({
 };
 
 export default BookSeatModal;
-
-// Fetch the Plan to show Price and then click on pay to razor pay payment

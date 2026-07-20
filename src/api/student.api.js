@@ -44,7 +44,11 @@ const getStudentSeatGrid = (floorId, { slotId, date }) =>
     .then((res) => res.data);
 
 const getAllPLans = async () => {
-  return await axiosInstance.get(`student/plans`);
+  return await axiosInstance.get(`/student/plans`);
+};
+
+const initiateStudentBooking = async (data) => {
+  return await axiosInstance.post(`/student/bookings//initiate`, data);
 };
 
 export {
@@ -57,4 +61,5 @@ export {
   getStudentSlots,
   getStudentSeatGrid,
   getAllPLans,
+  initiateStudentBooking,
 };
