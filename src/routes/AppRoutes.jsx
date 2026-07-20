@@ -29,6 +29,14 @@ import VerifyOTPPage from "../pages/auth/VerifyOtpPage";
 import ForgotPasswordPage from "../pages/auth/ForgotPassword";
 import ResetPasswordPage from "../pages/auth/ResetPassword";
 
+// --------------------------------- Student Page -----------------
+import StudentLayout from "../layouts/StudentLayout";
+import SeatGridPage from "../pages/student/pages/SeatGridPage";
+import StudentBookingsPage from "../pages/student/pages/StudentBookingsPage";
+import StudentBookingDetailPage from "../pages/student/pages/StudentBookingDetailPage";
+import MyQrPage from "../pages/student/pages/MyQrPage";
+import ProfilePage from "../pages/student/pages/ProfilePage";
+
 import { lazy } from "react";
 
 const AppRouter = () => {
@@ -97,7 +105,18 @@ const AppRouter = () => {
         </Route>
         {/* ------------------------------------ Student ---------------------------------- */}
         <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
-          <Route path="/student/dashboard" element={<StudentDashboard />} />
+          {/* <Route path="/student/dashboard" element={<StudentDashboard />} /> */}
+          <Route element={<StudentLayout />}>
+            <Route path="/student/dashboard" element={<StudentDashboard />} />
+            <Route path="/student/bookings" element={<StudentBookingsPage />} />
+            <Route
+              path="/student/bookings/:bookingId"
+              element={<StudentBookingDetailPage />}
+            />
+            <Route path="/student/browse" element={<SeatGridPage />} />
+            <Route path="/student/qr" element={<MyQrPage />} />
+            <Route path="/student/profile" element={<ProfilePage />} />
+          </Route>
         </Route>
         {/* ------------------------------------ Guard ---------------------------------- */}
         <Route element={<ProtectedRoute allowedRoles={["guard"]} />}>

@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap");
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
-/* @variant dark (&:is(.dark *)); */
+
 @keyframes slideInRight {
   from {
     transform: translateX(100%);
@@ -10,3 +10,5 @@
     transform: translateX(0);
   }
 }
+
+@custom-variant max-392 (@media (max-width: 392px));

@@ -22,3 +22,5 @@ const SEAT_TYPES = [
 ];
 
 export { ROLES, DAYS, SEAT_TYPES };
+
+export const LIBRARY_NAME = "Libro";

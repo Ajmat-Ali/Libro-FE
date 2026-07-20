@@ -47,7 +47,6 @@ export default function MemberIDCard({
   const [prt, setPrt] = useState(false);
   const [dl, setDl] = useState(false);
 
-  // Derived
   const student = booking?.studentId ?? {};
   const seat = booking?.seatId ?? {};
   const slot = booking?.timeSlotId ?? {};

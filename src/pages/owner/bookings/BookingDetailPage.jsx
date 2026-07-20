@@ -10,7 +10,7 @@ import CreateBookingDrawer from "./CreateBookingDrawer";
 import { cancelBooking, extendBooking } from "../../../api/owner.api";
 
 import { fetchQRAsBase64 } from "../../../utils/qrUtils";
-import MemberIdCard from "./MemberIdCard";
+import MemberIdCard from "../../../components/MemberIdCard";
 import DetailSkeleton from "./DetailSkeleton";
 import { useSelector } from "react-redux";
 
@@ -45,12 +45,12 @@ export default function BookingDetailPage() {
     return () => clearTimeout(t);
   }, [toast]);
 
-  // Fetch booking
   const fetchBooking = () => {
     setLoading(true);
     setError("");
     getOneBooking(bookingId)
       .then((res) => {
+        console.log(res?.data?.booking);
         setBooking(res?.data?.booking || {});
         setPayment(res?.data?.payment ?? null);
         fetchCardData(res.data.booking.studentId._id, res.data.booking._id);

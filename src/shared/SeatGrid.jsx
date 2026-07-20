@@ -65,8 +65,8 @@ const SeatGrid = ({ seats, loading, error, bothSelected, onSeatClick }) => {
   }
 
   return (
-    <div className=" border- 5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5">
-      <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-10 gap-2">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5">
+      <div className="grid max-392:grid-cols-3 grid-cols-4 sm:grid-cols-7 lg:grid-cols-10 lg:gap-y-5 gap-x-2 gap-y-4">
         {seats.map((item) => (
           <SeatCard
             key={item.seat._id}
