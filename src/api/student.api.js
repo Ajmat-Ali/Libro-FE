@@ -11,10 +11,12 @@ const getStudentProfile = () =>
   axiosInstance.get("/student/profile").then((res) => res.data);
 
 const fetchMyQRAsBase64 = async (qrId) => {
+  console.log(qrId);
   try {
     const imgRes = await axiosInstance.get(`/student/my-qr/${qrId}`, {
       responseType: "blob",
     });
+
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result);

@@ -14,7 +14,6 @@ import {
 import { getOneMember, toggleMemberStatus } from "../../../api/owner.api";
 import UpdateMemberDrawer from "./UpdateMemberDrawer";
 
-// Status config
 const statusConfig = {
   approved: {
     label: "Active",
@@ -88,6 +87,11 @@ const MemberDetailPage = () => {
 
   const handleToggleStatus = async () => {
     try {
+      const userConfirmed = confirm(
+        "Are you sure you want to suspend this member? Their QR code will be permanently revoked and cannot be restored.",
+      );
+      if (!userConfirmed) return;
+
       setToggling(true);
       await toggleMemberStatus(member?.profile?.userId?._id);
       fetchMember();
@@ -316,11 +320,11 @@ const MemberDetailPage = () => {
                   onClick={handleToggleStatus}
                   disabled={toggling}
                   className={`w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed
-                             ${
-                               isActive
-                                 ? "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20 border border-red-200 dark:border-red-500/30"
-                                 : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/30"
-                             }`}
+                      ${
+                        isActive
+                          ? "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20 border border-red-200 dark:border-red-500/30"
+                          : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/30"
+                      }`}
                 >
                   {toggling ? (
                     <svg
