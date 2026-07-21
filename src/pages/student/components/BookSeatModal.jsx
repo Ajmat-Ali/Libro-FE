@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { X, MapPin, Clock, IndianRupee, Calendar, Loader2 } from "lucide-react";
+import {
+  X,
+  MapPin,
+  Clock,
+  IndianRupee,
+  Calendar,
+  Loader2,
+  LoaderCircle,
+} from "lucide-react";
 import { formatDate } from "../../../utils/dateUtils";
 import { getAllPLans, initiateStudentBooking } from "../../../api/student.api";
 import { useNavigate } from "react-router-dom";
@@ -97,8 +105,6 @@ const BookSeatModal = ({
       });
 
       rzp.open();
-
-      //-------
     } catch (err) {
       let errorMessage = "Something went wrong";
       console.log(err.response.data?.errors);
@@ -221,29 +227,19 @@ const BookSeatModal = ({
           </span>
           <span className="flex items-center text-xl font-semibold text-slate-900 dark:text-white">
             <IndianRupee size={17} />
-            {plan ? plan[0].calculatedPrice : "—"}
+            {plan ? (
+              plan[0].calculatedPrice
+            ) : (
+              <LoaderCircle size={16} className="animate-spin" />
+            )}
           </span>
         </div>
 
         {seatData.gridStatus === "available" ? (
-          //   <button
-          //     onClick={handleConfirm}
-          //     disabled={submitting}
-          //     className="cursor-pointer w-full mt-5 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white font-medium text-sm py-3 rounded-xl transition flex items-center justify-center gap-2"
-          //   >
-          //     {submitting ? (
-          //       <>
-          //         <Loader2 size={16} className="animate-spin" />
-          //         Processing...
-          //       </>
-          //     ) : (
-          //       "Book & Pay"
-          //     )}
-          //   </button>
           <button
             onClick={handleBookAndPay}
             disabled={isProcessing}
-            className="w-full mt-5 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white font-medium text-sm py-3 rounded-xl transition flex items-center justify-center gap-2"
+            className="cursor-pointer w-full mt-5 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white font-medium text-sm py-3 rounded-xl transition flex items-center justify-center gap-2"
           >
             {isProcessing ? (
               <>

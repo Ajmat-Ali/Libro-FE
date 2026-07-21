@@ -63,9 +63,9 @@ axiosInstance.interceptors.response.use(
           { withCredentials: true },
         );
 
-        const { accessToken, user } = response.data;
+        const { accessToken, userData } = response.data;
 
-        appStore.dispatch(setCredentials({ user, accessToken }));
+        appStore.dispatch(setCredentials({ user: userData, accessToken }));
         processQueue(null, accessToken);
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
