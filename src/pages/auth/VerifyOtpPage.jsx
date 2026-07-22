@@ -74,6 +74,7 @@ export default function VerifyOTPPage() {
 
       const res = await resendOTP({ email });
       setDevOtp(res?.data?.devOtp);
+      console.log(res.data.devOtp);
 
       setCanResend(false);
       setSecs(60);
@@ -116,8 +117,10 @@ export default function VerifyOTPPage() {
               <p className="text-sm mt-3 text-teal-900 text-wrap">
                 {" "}
                 Email sending is not working right now, so please use the OTP
-                shown on your{" "}
-                <span className="font-bold text-lg ml-2">{devOtp}</span>
+                shown on your screen
+                <span className="font-bold text-lg ml-2">
+                  {devOtp ? devOtp : "-"}
+                </span>
               </p>
             </div>
           )}
