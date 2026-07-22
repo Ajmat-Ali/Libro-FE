@@ -59,7 +59,11 @@ function OTPInput({ value = "", onChange, disabled = false }) {
             onFocus={(e) => e.target.select()}
             disabled={disabled}
             className={`
-              w-11 h-14 sm:w-12 sm:h-[58px] text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all duration-150 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed
+              w-11 h-14 sm:w-12 sm:h-[58px] text-center text-2xl font-black 
+              rounded-2xl border-2 outline-none transition-all duration-150 
+              bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white 
+              disabled:opacity-50 disabled:cursor-not-allowed
+              max-392:w-9 max-392:h-10
                ${
                  filled
                    ? "border-amber-500 bg-amber-50 dark:bg-amber-900/20 shadow-md shadow-amber-100 dark:shadow-none scale-105"

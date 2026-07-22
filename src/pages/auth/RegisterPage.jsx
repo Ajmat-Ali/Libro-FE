@@ -57,7 +57,9 @@ const RegisterPage = () => {
       if (res.status === 201) {
         localStorage.setItem("email", JSON.stringify(data.email));
 
-        navigate("/verify-otp", { state: { email: data.email } });
+        navigate("/verify-otp", {
+          state: { email: data.email, devOtp: res.data.devOtp },
+        });
       }
 
       setToast({
