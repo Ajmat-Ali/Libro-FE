@@ -74,7 +74,6 @@ export default function VerifyOTPPage() {
 
       const res = await resendOTP({ email });
       setDevOtp(res?.data?.devOtp);
-      console.log(res.data.devOtp);
 
       setCanResend(false);
       setSecs(60);
